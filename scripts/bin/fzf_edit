@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+fedit() {
+  fzf --ansi --multi \
+      --preview 'bat --style=full --color=always {}' \
+      --bind 'alt-a:select-all,alt-d:deselect-all,ctrl-/:toggle-preview' \
+      --bind "enter:become:nvim {+}"
+}
+fedit

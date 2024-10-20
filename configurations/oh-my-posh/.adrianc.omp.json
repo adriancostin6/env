@@ -1,0 +1,86 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 4,
+  "final_space": true,
+  "patch_pwsh_bleed": true,
+  "async": true,
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "session",
+          "style": "powerline",
+          "foreground": "#494d64",
+          "background": "#b7bdf8",
+          "template": " {{ .HostName }} ",
+          "powerline_symbol": "\ue0b4",
+          "leading_powerline_symbol": "\ue0b6"
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "foreground": "p:catppuccin-text",
+          "background": "p:catppuccin-pink",
+          "template": " \uf07c  {{ .Path }} ",
+          "powerline_symbol": "\ue0b4",
+          "options": {
+            "style": "agnoster_full"
+          }
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "foreground": "p:catppuccin-text",
+          "background": "p:catppuccin-lavender",
+          "template": "  {{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }} ",
+          "powerline_symbol": "\ue0b4"
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "status",
+          "style": "plain",
+          "foreground": "green",
+          "background": "transparent",
+          "template": " {{ if eq .Code 0 }}\uf00c{{ else }}\uf071 {{ .Code }}{{ end }} ",
+          "powerline_symbol": "\ue0b0",
+          "options": {
+            "always_enabled": true
+          }
+        },
+        {
+          "type": "shell",
+          "style": "plain",
+          "foreground": "green",
+          "background": "transparent",
+          "template": " \ue795 {{ .Name }} >",
+          "powerline_symbol": "\ue0b0",
+          "cache": {
+            "duration": "24h",
+            "strategy": "session"
+          }
+        }
+      ]
+    }
+  ],
+  "palette": {
+    "text-light": "#ffffff",
+    "path-bg": "#61AFEF",
+    "git-bg": "#98C379",
+    "everforest-aqua": "#83c092",
+    "everforest-green": "#a7c080",
+    "everforest-foreground": "#7a8478",
+    "catppuccin-pink": "#f5bde6",
+    "catppuccin-lavender": "#b7bdf8",
+    "catppuccin-blue": "#baadf4",
+    "catppuccin-text": "#494d64",
+    "catppuccin-os": "#acb0be"
+  }
+}

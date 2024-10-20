@@ -1,0 +1,9 @@
+[opener]
+edit = [
+	{ run = "${EDITOR:-vi} %s", desc = "$EDITOR",       for = "unix", block = true },
+	{ run = "%EDITOR% %s",      desc = "%EDITOR%",      for = "windows", block = true },
+	{ run = "nvim %s",          desc = "Neovim",        for = "windows", block = true },
+	{ run = "code -w %s",       desc = "code (block)",  for = "windows", block = true },
+	{ run = "code %s",          desc = "code",          for = "windows", orphan = true },
+	{ run = "idea64 %s",        desc = "IntelliJ IDEA", for = "windows", orphan = true },
+]

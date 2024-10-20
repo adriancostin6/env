@@ -1,0 +1,10 @@
+#!/bin/bash
+xsetroot -solid skyblue4
+
+if [ -f "$HOME/.xsession.extras" ]; then
+    source "$HOME/.xsession.extras"
+fi
+
+dwm &
+
+wait

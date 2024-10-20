@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+main() {
+	if [ $# -gt 1 ]; then
+		printf "%s" "usage: gh_workflow_run_interactive [branch]"
+		return
+	fi
+
+	local branch
+	if  [ $# -eq 0 ] ; then
+		branch="$(git rev-parse --abbrev-ref HEAD)"
+	else
+		branch="$1"
+	fi
+
+	gh workflow run --ref "$branch"
+}
+
+main

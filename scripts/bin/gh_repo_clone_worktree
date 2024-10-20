@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+git_repo_name_from_url() {
+	local url="$1"
+	IFS='/' read -ra split_url <<< "$url"
+	echo "${split_url[-1]/.git/}" # strip .git if present
+}
+
+main() {
+	local url="${@: -1}"
+	local repo_name="$(git_repo_name_from_url)"
+
+	mkdir "$repo_name"
+	pushd "$repo_name"
+
+	# place bare repo contents in hidden folder to hide them
+	gh repo clone $* .bare -- --bare
+	printf "gitdir: ./.bare" > .git
+
+	# make git bare repo fetch remote branches properly
+	git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+	git fetch origin
+
+	popd
+}
+
+main

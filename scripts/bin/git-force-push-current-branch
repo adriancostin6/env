@@ -1,0 +1,16 @@
+
+#!/usr/bin/env bash
+
+main() {
+	local current="$(git branch --show-current)"
+	local command="git push origin --force $current"
+
+	read -r -p "Execute: '$command' ?(y/N)" confirm
+	local lower=${confirm,,}
+
+	if [ "$lower" = "y" ]; then
+		eval "$command"
+	fi
+}
+
+main

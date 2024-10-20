@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+main() {
+	local worktree="$(git worktree list --porcelain | rg worktree | fzf | awk '{print $2}')"
+	echo "$worktree"
+}
+
+main

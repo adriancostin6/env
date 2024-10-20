@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+main() {
+	local current="$(git branch --show-current)"
+	git push origin "$current"
+}
+
+main

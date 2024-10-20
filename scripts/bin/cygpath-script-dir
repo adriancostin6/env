@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+script_dir() {
+    local relative_script_path
+    relative_script_path="$( dirname -- "${BASH_SOURCE[0]}" )"
+
+    local absolute_script_dir
+    absolute_script_dir="$(cd -- "$relative_script_path" &> /dev/null && pwd)"
+
+    echo "$absolute_script_dir"
+}
+
+echo "$(cygpath -w "$(script_dir)")"
