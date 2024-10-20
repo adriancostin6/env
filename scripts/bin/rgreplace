@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+usage() {
+    printf 'usage: rgreplace [rg args] <pattern> <replacement>\n'
+    printf 'rg wrapper that does find and replace\n'
+}
+[ $# -eq 0 ] && { usage; exit 1; }
+
+# pop and store last 2 args
+REPLACE="${@: -1}"
+set -- "${@:1:${#}-1}"
+PATTERN="${@: -1}"
+set -- "${@:1:${#}-1}"
+
+if [ $# -eq 0 ]; then
+    rg --files-with-matches "$PATTERN" | xargs -d "\n" sed -i "s|$PATTERN|$REPLACE|g"
+else
+    rg --files-with-matches "$*"  "$PATTERN" | xargs -d "\n" sed -i "s|$PATTERN|$REPLACE|g"
+fi
+

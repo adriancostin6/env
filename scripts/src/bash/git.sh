@@ -1,0 +1,157 @@
+function owned_branches {
+    echo "Enter owner name (First, Last):"
+    read name
+
+    git for-each-ref \
+        --sort=committerdate                                            \
+        --format='%(committerdate) %09 %(authorname) %09 %(refname)'    \
+        refs/remotes | grep -v "[S-Z]-[0-9][0-9][0-9][0-9]\.[0-9][0-9]" \
+    | grep refs/remotes/origin/                                         \
+    | grep "$name"
+}
+function fuzzy_git_status {
+    local repo_root="$(git rev-parse --show-toplevel)/"
+    echo $(git status --porcelain | fzf --multi | awk -v root=$repo_root '{print root $2}')
+}
+function git_fuzzy_status_cmd {
+    git "$@" $(fuzzy_git_status)
+}
+function fuzzy_hash {
+    local hash=$(git log --oneline | fzf --ansi | awk '{print $1}')
+    echo $hash
+}
+function git_fuzzy_hash_cmd {
+    local hash=$(fuzzy_hash)
+    if [ ! -v $hash ];then
+        git "$@" $hash
+    fi
+}
+function is_repo {
+    git rev-parse --is-inside-work-tree > /dev/null 2>&1
+}
+function git_clone_wt {
+    # get repo name from url
+    local url="${@: -1}"
+    IFS='/' read -ra split_url <<< "$url"
+    local repo_name="${split_url[-1]/.git/}" # strip .git if present
+
+    mkdir "$repo_name"
+    cd "$repo_name"
+
+    # place bare repo contents in hidden folder to hide them
+    git clone --bare $* .bare
+    printf "gitdir: ./.bare" > .git
+
+    # make git bare repo fetch remote branches properly
+    git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+    git fetch origin
+
+    cd -
+}
+function gh_repo_clone_wt() {
+    # get repo name from url
+    local url="${@: -1}"
+    IFS='/' read -ra split_url <<< "$url"
+    local repo_name="${split_url[-1]/.git/}" # strip .git if present
+
+    mkdir "$repo_name"
+    cd "$repo_name"
+
+    # place bare repo contents in hidden folder to hide them
+    gh repo clone $* .bare -- --bare
+    printf "gitdir: ./.bare" > .git
+
+    # make git bare repo fetch remote branches properly
+    git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+    git fetch origin
+
+    cd -
+}
+function select_worktree {
+    local worktree="$(git worktree list --porcelain | rg worktree | fzf | awk '{print $2}')"
+    echo $worktree
+}
+function remove_worktree {
+    is_repo || return
+
+    if [ $# -gt 1 ];then
+        echo "Invalid number of arguments"
+    fi
+
+    if [ $# -eq 0 ];then
+        local worktree=$(select_worktree)
+        if [ -z "$worktree" ];then
+            echo "Selection is empty. Cannot remove worktree."
+            return
+        fi
+
+        git worktree remove $worktree
+    else
+        git worktree remove $1
+    fi
+}
+function switch_worktree {
+    is_repo || return
+
+    if [ $# -gt 1 ];then
+        echo "Invalid number of arguments"
+    fi
+
+    if [ $# -eq 0 ];then
+        local worktree=$(select_worktree)
+        if [ -z "$worktree" ];then
+            echo "Selection is empty. Cannot switch worktree."
+            return
+        fi
+
+        cd $worktree
+    else
+        cd $1
+    fi
+}
+
+function git_update_current_branch {
+    git pull origin $(git rev-parse --abbrev-ref HEAD)
+}
+
+function git_push_current_force {
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    local cmd="git push origin --force $current_branch"
+
+    read -r -p "Execute: $cmd ?(y/N)" confirm
+    local lower=${confirm,,}
+
+    if [ "$lower" = "y" ]; then
+        eval "$cmd"
+    fi
+}
+
+function git_push_current {
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    git push origin  $current_branch
+}
+
+function git_graph {
+    #hash - <author-date> (time-elapsed-here) (commiter-date)  (HEAD -> (branch-name))
+    #      message
+    #      - First Last <author-mail>  (committer: First Last <commiter-mail>)
+    # NOTE: some trailing spaces present. these are important, don't remove them
+    # From: https://stackoverflow.com/a/34467298
+    local hash="%C(bold blue)%h%C(reset)"
+    local author_date="%C(bold cyan)%aD%C(reset)"
+    local elapsed="%C(bold green)(%ar)%C(reset)"
+    local commiter_date="%C(bold cyan)(committed: %cD)%C(reset)"
+    local branch_name="%C(auto)%d%C(reset)%n"
+    local commit_message="%C(white)%s%C(reset)%n"
+    local author_first_last_and_mail="%C(dim white)- %an <%ae>"
+    local commiter_first_last_and_mail="%C(dim white)(committer: %cn <%ce>)%C(reset)"
+
+    local fmt
+    read -r -d '' fmt <<EOF
+$hash - $author_date $elapsed $commiter_date $branch_name
+      $commit_message
+      $author_first_last_and_mail $commiter_first_last_and_mail
+EOF
+    local format=$(echo $fmt | tr -d '\n') # strip newlines
+    git log --all --graph --abbrev-commit --decorate --format=format:"$format"
+}
