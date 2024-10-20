@@ -1,0 +1,60 @@
+ENV_CACHE_DIR="$HOME/.local/share/env"
+source "$ENV_CACHE_DIR/repodir"
+
+pushd () {
+    command pushd "$@" > /dev/null
+}
+
+popd() {
+    command popd "$@" > /dev/null
+}
+
+# VI mode for Readline
+set -o vi 
+bind -m vi-insert '"\C-l":clear-screen'
+bind -m vi-insert '"\C-a":beginning-of-line'
+bind -m vi-insert '"\C-e":end-of-line'
+bind -m vi-insert '"\C-w":backward-kill-word'
+bind -m vi-insert '"\C-k":kill-line'
+
+# Editor
+export VISUAL="nvim --clean"
+export EDITOR="$VISUAL"
+
+# XDG
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_CACHE_HOME="$HOME/.local/share"
+
+export IDEA_PROPERTIES="$ENV_REPO_DIR/configurations/idea/idea.properties"
+export ENV_APP_HOME="$HOME/apps"
+export ENV_REPO_HOME="$HOME/repos"
+
+# setup local bin folder
+[[ ":$PATH:" == "*:$HOME/.local/bin:*" ]] || PATH="$HOME/.local/bin:$PATH"
+
+# source configuration scripts
+pushd "$ENV_REPO_DIR/scripts"
+source ./init.sh
+popd
+
+# setup nvm
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+
+# don't move these around, they require the sourced config scripts and must be at the end
+exec_if zoxide init bash
+exec_if oh-my-posh init bash --config "$XDG_CONFIG_HOME/oh-my-posh/.adrianc.omp.json"
+
+# persist history between multiple bash sessions
+mkdir -p "$XDG_STATE_HOME/bash"
+export HISTCONTROL='ignoreboth:erasedups' # no spaces, no duplicates
+export HISTFILE="$XDG_STATE_HOME/bash/history"
+export HISTFILESIZE=10000
+export HISTSIZE=10000
+export PROMPT_COMMAND="history -a; $PROMPT_COMMAND" # update history on each prompt
+shopt -s histappend
+set -o history
+
+shopt -s globstar
