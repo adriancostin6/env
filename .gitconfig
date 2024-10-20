@@ -1,0 +1,34 @@
+# This is Git's per-user configuration file.
+#
+[core]
+	pager = /u/adrianc/apps/delta-0.17.0-x86_64-unknown-linux-musl/delta
+
+[interactive]
+	diffFilter = /u/adrianc/apps/delta-0.17.0-x86_64-unknown-linux-musl/delta --color-only --features=interactive
+
+[delta]
+	light = true
+	features = decorations
+
+[delta "interactive"]
+	keep-plus-minus-markers = false
+
+[delta "decorations"]
+	commit-decoration-style = blue ol
+	commit-style = raw
+	file-style = omit
+	hunk-header-decoration-style = blue box
+	hunk-header-file-style = red
+	hunk-header-line-number-style = "#067a00"
+	hunk-header-style = file line-number syntax
+[user]
+	name = Adrian Costin
+	email = adrianc@synopsys.com
+[pull]
+	rebase = true
+[merge]
+	ff = only
+	conflictstyle = diff3
+	tool = custom
+[mergetool "custom"]
+	cmd = "nvim -d -c \"4wincmd w\" -c \"wincmd J\" \"$LOCAL\" \"$BASE\" \"$REMOTE\" \"$MERGED\""
