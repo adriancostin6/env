@@ -1,13 +1,13 @@
 # This is Git's per-user configuration file.
 #
 [core]
-	pager = /u/adrianc/apps/delta-0.17.0-x86_64-unknown-linux-musl/delta
+	pager = delta
 
 [interactive]
-	diffFilter = /u/adrianc/apps/delta-0.17.0-x86_64-unknown-linux-musl/delta --color-only --features=interactive
+	diffFilter = delta --color-only --features=interactive
 
 [delta]
-	light = true
+	light = false
 	features = decorations
 
 [delta "interactive"]
@@ -23,7 +23,7 @@
 	hunk-header-style = file line-number syntax
 [user]
 	name = Adrian Costin
-	email = adrianc@synopsys.com
+	email = adriancostin6@gmail.com
 [pull]
 	rebase = true
 [merge]
