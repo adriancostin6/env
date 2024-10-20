@@ -1,0 +1,66 @@
+function fuzzy_git_status {
+    local repo_root="$(git rev-parse --show-toplevel)/"
+    echo $(git status --porcelain | fzf --multi | awk -v root=$repo_root '{print root $2}')
+}
+function git_fuzzy_status_cmd {
+    git "$@" $(fuzzy_git_status)
+}
+function fuzzy_hash {
+    local hash=$(git log --oneline | fzf --ansi | awk '{print $1}')
+    echo $hash
+}
+function git_fuzzy_hash_cmd {
+    local hash=$(fuzzy_hash)
+    if [ ! -v $hash ];then
+        git "$@" $hash
+    fi
+}
+function is_repo {
+    git rev-parse --is-inside-work-tree > /dev/null 2>&1
+}
+function git_clone_wt {
+    git clone --bare $* 
+    git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+}
+function select_worktree {
+    local worktree="$(git worktree list --porcelain | rg worktree | fzf | awk '{print $2}')"
+    echo $worktree
+}
+function remove_worktree {
+    is_repo || return
+
+    if [ $# -gt 1 ];then
+        echo "Invalid number of arguments"
+    fi
+
+    if [ $# -eq 0 ];then
+        local worktree=$(select_worktree)
+        if [ -z "$worktree" ];then
+            echo "Selection is empty. Cannot remove worktree."
+            return
+        fi
+
+        git worktree remove $worktree
+    else
+        git worktree remove $1
+    fi
+}
+function switch_worktree {
+    is_repo || return
+
+    if [ $# -gt 1 ];then
+        echo "Invalid number of arguments"
+    fi
+
+    if [ $# -eq 0 ];then
+        local worktree=$(select_worktree)
+        if [ -z "$worktree" ];then
+            echo "Selection is empty. Cannot switch worktree."
+            return
+        fi
+
+        cd $worktree
+    else
+        cd $1
+    fi
+}
