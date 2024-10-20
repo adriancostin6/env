@@ -1,0 +1,8 @@
+[core]
+	pager = delta
+[interactive]
+	diffFilter = delta --color-only --features=interactive
+[merge]
+	tool = custom
+[mergetool "custom"]
+	cmd = "nvim -d -c \"4wincmd w\" -c \"wincmd J\" \"$LOCAL\" \"$BASE\" \"$REMOTE\" \"$MERGED\""

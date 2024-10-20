@@ -1,0 +1,6 @@
+# This is Git's per-user configuration file.
+#
+[include]
+	path = common.gitconfig
+	path = tools.gitconfig
+	path = ~/.gitconfig-local # per-machine configuration file

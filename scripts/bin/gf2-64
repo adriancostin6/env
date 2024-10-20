@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+PATH="$SILVER_HOME/common/ext-tools/mingw64/bin:$PATH"
+gf2 "$*"
