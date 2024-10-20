@@ -1,0 +1,20 @@
+# This is Git's per-user configuration file.
+#
+[core]
+	pager = delta
+[interactive]
+	diffFilter = delta --color-only --features=interactive
+[include]
+	path=catppuccin.gitconfig
+[includeIf "gitdir:~/repos/work"]
+	path=.gitconfig-work
+[includeIf "gitdir:~/repos/work"]
+	path=.gitconfig-personal
+[pull]
+	rebase = true
+[merge]
+	ff = only
+	conflictstyle = diff3
+	tool = custom
+[mergetool "custom"]
+	cmd = "nvim -d -c \"4wincmd w\" -c \"wincmd J\" \"$LOCAL\" \"$BASE\" \"$REMOTE\" \"$MERGED\""
