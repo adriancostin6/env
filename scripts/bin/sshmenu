@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+. ../src/bash/log.sh
+
+# dmenu ssh wrapper
+
+if [[ -z "$DMENU_SSH_HOSTS" ]]; then
+    err "DMENU_SSH_HOSTS array not defined."
+    die "Please export as a list of newline separated hosts."
+fi
+
+set -e
+
+HOST=$(dmenu -i -l 4 $DMENU_SSH_HOSTS)
+
+st -e ssh -X adrianc@$HOST
