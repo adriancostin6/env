@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -e
+
+HOST=$(dmenu -i -l 4 <<EOF
+stormcs465.eudc.maas.synopsys.com
+stormcs497.eudc.maas.synopsys.com
+stormcs498.eudc.maas.synopsys.com
+stormwt208
+EOF
+)
+
+st -e ssh -X adrianc@$HOST

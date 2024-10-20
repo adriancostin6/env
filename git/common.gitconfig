@@ -1,0 +1,8 @@
+[user]
+	name = Adrian Costin
+	email = adriancostin6@gmail.com
+[pull]
+	rebase = true
+[merge]
+	ff = only
+	conflictstyle = diff3

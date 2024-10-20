@@ -1,0 +1,14 @@
+git/includeif.gitconfig
+git/work.gitconfig
+
+scripts/work/*
+!scripts/work/
+!scripts/work/init.sh
+
+scripts/work/src/*
+!scripts/work/src/
+!scripts/work/src/init.sh
+
+scripts/work/bin/*
+!scripts/work/bin/
+!scripts/work/bin/.gitkeep
