@@ -4,6 +4,10 @@ local wezterm = require'wezterm'
 
 local appearance = wezterm.gui.get_appearance()
 
+M.default = appearance:find('Dark') and 'Catppuccin Frappe' or 'Catppuccin Latte'
+M.delta = appearance:find('Dark') and 'delta-dark' or 'delta-light'
+M.system = appearance:find('Dark') and 'dark' or 'light'
+
 local themes = {
     'Catppuccin Latte',
     'Catppuccin Frappe',
@@ -43,8 +47,5 @@ function M.select(window, pane)
   )
 end
 
-M.default = appearance:find('Dark') and 'Catppuccin Frappe' or 'Catppuccin Latte'
-M.delta = appearance:find('Dark') and 'delta-dark' or 'delta-light'
-M.system = appearance:find('Dark') and 'dark' or 'light'
 
 return M
