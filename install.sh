@@ -46,6 +46,7 @@ declare -rA stows=(
   ["zellij"]="$HOME/.config/zellij"
   ["nvim"]="$HOME/.config/nvim"
   ["oh-my-posh"]="$HOME/.config/oh-my-posh"
+  ["wezterm"]="$HOME/.config/wezterm"
 )
 source "scripts/personal/config/tools/stow.sh"
 printf "Stowing configurations...\n"

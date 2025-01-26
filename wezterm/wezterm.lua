@@ -23,9 +23,6 @@ return {
       DEV_HOME              = '~/repos',
       SYSTEM_THEME          = theme:find('Dark') and 'dark' or 'light',
       DELTA_FEATURES        = theme:find('Dark') and 'delta-dark' or 'delta-light',
-
-      PATH = 'C:/Users/adrianc/repos/scripts;'
-          .. os.getenv('PATH')
   },
 
   keys = {
@@ -83,6 +80,32 @@ return {
         key   = 'f',
         mods  = 'META|SHIFT',
         action = wezterm.action.ToggleFullScreen
+    },
+
+    {
+	key = 's',
+        mods  = 'META|SHIFT',
+        action = wezterm.action.InputSelector {
+			action = wezterm.action_callback(
+				function(inner_window, inner_pane, id, label)
+					if not id and not label then
+						wezterm.log_info 'No theme selected.'
+						return
+					end
+					wezterm.log_info("id=" .. id)
+					wezterm.log_info("label=" .. label)
+				end
+			),
+			title = 'Color schemes',
+			choices =  {
+				{id = 'Catppuccin Latte', label = 'Light theme'},	
+				{id = 'Catppuccin Frappe', label = 'Light dark theme'},	
+				{id = 'Catppuccin Macchiatto', label = 'Dark theme'},	
+				{id = 'Catppuccin Mocha', label = 'Darker theme'},	
+			},
+			fuzzy = true,
+			fuzzy_description = "Fuzzy select theme",
+		},
     },
   },
 
