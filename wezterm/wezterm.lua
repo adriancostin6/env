@@ -3,12 +3,42 @@ local wezterm = require'wezterm'
 local gpus = wezterm.gui.enumerate_gpus()
 local theme = wezterm.gui.get_appearance()
 
+local themes = {
+    'Catppuccin Latte',
+    'Catppuccin Frappe',
+    'Catppuccin Macchiato',
+    'Catppuccin Mocha',
+}
+wezterm.on('spawn-theme-selector', function(window, pane)
+  local choices = {}
+  for _, theme in ipairs(themes) do
+    table.insert(choices, { label = theme, id = theme})
+  end
+  window:perform_action(
+    wezterm.action.InputSelector({
+      action = wezterm.action_callback(function(window, pane, id, label)
+        if not id and not label then
+            return
+        end
+        local theme = label
+        wezterm.log_info(theme)
+        window:set_config_overrides({ color_scheme = theme })
+      end),
+      title = 'Color schemes',
+      choices = choices,
+      fuzzy = true,
+      fuzzy_description = "Fuzzy select color scheme.",
+    }),
+    pane
+  )
+end)
+
 return {
 --  front_end = 'WebGpu',
 --  webgpu_preferred_adapter = gpus[1],
   font              = wezterm.font('Iosevka NF', {weight = 'Light',}),
-  color_scheme      = theme:find('Dark') and 'Catppuccin Frappe' or 'Catppuccin Latte',
   enable_tab_bar    = false,
+  color_scheme = theme:find('Dark') and 'Catppuccin Frappe' or 'Catppuccin Latte',
 
   window_padding = {
     top     = 0,
@@ -83,29 +113,9 @@ return {
     },
 
     {
-	key = 's',
-        mods  = 'META|SHIFT',
-        action = wezterm.action.InputSelector {
-			action = wezterm.action_callback(
-				function(inner_window, inner_pane, id, label)
-					if not id and not label then
-						wezterm.log_info 'No theme selected.'
-						return
-					end
-					wezterm.log_info("id=" .. id)
-					wezterm.log_info("label=" .. label)
-				end
-			),
-			title = 'Color schemes',
-			choices =  {
-				{id = 'Catppuccin Latte', label = 'Light theme'},	
-				{id = 'Catppuccin Frappe', label = 'Light dark theme'},	
-				{id = 'Catppuccin Macchiatto', label = 'Dark theme'},	
-				{id = 'Catppuccin Mocha', label = 'Darker theme'},	
-			},
-			fuzzy = true,
-			fuzzy_description = "Fuzzy select theme",
-		},
+      key = 's',
+      mods  = 'META|SHIFT',
+      action = wezterm.action.EmitEvent("spawn-theme-selector")
     },
   },
 
