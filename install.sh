@@ -62,5 +62,6 @@ do
     fi
 done
 
-echo "source $install_home/env/bash/.bashrc.adrianc" >> "$HOME/.bashrc"
-exec bash
+bashrc="$install_home/env/bash/.bashrc.adrianc"
+echo "source $bashrc" >> "$HOME/.bashrc"
+source "$bashrc"
