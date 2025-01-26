@@ -63,4 +63,4 @@ do
 done
 
 echo "source $install_home/env/bash/.bashrc.adrianc" >> "$HOME/.bashrc"
-bash
+exec bash
