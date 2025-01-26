@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 install_home="$PWD"
-if [ "$install_home" != "$HOME"]; then
+if [ "$install_home" != "$HOME" ]; then
 	printf "Cannot install outside of $HOME directory currently.\n"
 	exit 1
 fi
@@ -10,11 +10,11 @@ needs=(
     stow
 )
 failed=0
-for pkg in "${!needs[@]}"
+for pkg in "${needs[@]}"
 do
   command -v $pkg &>/dev/null || { printf "Missing required dependency: %s\n" $pkg; let failed++;continue; }
 done
-if [ failed -gt 0 ]; then
+if [ $failed -gt 0 ]; then
     exit 1
 fi
 
@@ -30,7 +30,7 @@ wants=(
     yazi
     zoxide
 )
-for pkg in "${!wants[@]}"
+for pkg in "${wants[@]}"
 do
   command -v $pkg &>/dev/null || { printf "Missing wanted package: %s\nConsider installing for better experience.\n" $pkg; continue; }
 done
@@ -41,7 +41,6 @@ printf "Cloning env repo.\n"
 git clone https://www.github.com/adriancostin6/env.git
 cd env
 
-printf "Stowing configurations...\n"
 declare -rA stows=(
   ["git"]="$HOME/.config/git"
   ["zellij"]="$HOME/.config/zellij"
@@ -49,10 +48,10 @@ declare -rA stows=(
   ["oh-my-posh"]="$HOME/.config/oh-my-posh"
 )
 source "scripts/personal/config/tools/stow.sh"
-for pkg in "${!NEEDS[@]}"
+printf "Stowing configurations...\n"
+for pkg in "${!stows[@]}"
 do
-    target="${NEEDS[$pkg]}"
-    echo $target
+    target="${stows[$pkg]}"
     if [ -n "$target" ] ; then
         if [ ! -d "$target" ]; then
             printf "$target does not exist, creating.\n"
