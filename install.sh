@@ -2,8 +2,8 @@
 
 install_home="$PWD"
 if [ "$install_home" != "$HOME" ]; then
-	printf "Cannot install outside of $HOME directory currently.\n"
-	exit 1
+    printf "Cannot install outside of $HOME directory currently.\n"
+    exit 1
 fi
 
 needs=(
