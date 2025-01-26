@@ -64,4 +64,3 @@ done
 
 bashrc="$install_home/env/bash/.bashrc.adrianc"
 echo "source $bashrc" >> "$HOME/.bashrc"
-source "$bashrc"
