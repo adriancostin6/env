@@ -18,3 +18,6 @@
 	tool = custom
 [mergetool "custom"]
 	cmd = "nvim -d -c \"4wincmd w\" -c \"wincmd J\" \"$LOCAL\" \"$BASE\" \"$REMOTE\" \"$MERGED\""
+[user]
+	email = adriancostin6@gmail.com
+	name = Adrian Costin
