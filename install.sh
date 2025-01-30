@@ -63,5 +63,6 @@ do
     fi
 done
 
-bashrc="$install_home/env/bash/.bashrc.adrianc"
-echo "source $bashrc" >> "$HOME/.bashrc"
+bashrc_home="$install_home/env/bash"
+# TODO: this appends each time. use sed to replace the line
+echo "cd $bashrc_home; source $bashrc; cd $install_home" >> "$HOME/.bashrc"
