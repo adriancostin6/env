@@ -1,3 +1,14 @@
+function owned_branches {
+    echo "Enter owner name (First, Last):"
+    read name
+
+    git for-each-ref \
+        --sort=committerdate                                            \
+        --format='%(committerdate) %09 %(authorname) %09 %(refname)'    \
+        refs/remotes | grep -v "[S-Z]-[0-9][0-9][0-9][0-9]\.[0-9][0-9]" \
+    | grep refs/remotes/origin/                                         \
+    | grep "$name"
+}
 function fuzzy_git_status {
     local repo_root="$(git rev-parse --show-toplevel)/"
     echo $(git status --porcelain | fzf --multi | awk -v root=$repo_root '{print root $2}')
