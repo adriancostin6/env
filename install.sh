@@ -64,5 +64,5 @@ do
 done
 
 bashrc_home="$install_home/env/bash"
-printf "Adding user shell configuation files to $HOME. \n"
-echo "cd $bashrc_home; source .bashrc.adrianc; cd $install_home" > "$HOME/.bashrc.adrianc"
+printf "Adding user shell configuation files to $HOME/.bashrc.adrianc. \n"
+echo "cd $bashrc_home; source .bashrc.adrianc; cd $install_home" >> "$HOME/.bashrc.adrianc"
