@@ -1,6 +1,5 @@
+PATH="$PWD/shell:$PATH"
 
-personal_home="$PWD"
-
-cd "$PWD/shell"
-source "init.sh"
-cd "$personal_home"
+pushd shell
+source ./init.sh
+popd

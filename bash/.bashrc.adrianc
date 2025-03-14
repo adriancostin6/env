@@ -1,7 +1,14 @@
-# Exports
+# Utils
+pushd () {
+    command pushd "$@" > /dev/null
+}
+
+popd() {
+    command popd "$@" > /dev/null
+}
 
 # Editor
-export VISUAL="nvim"
+export VISUAL="nvim --clean"
 export EDITOR="$VISUAL"
 
 # XDG
@@ -12,12 +19,13 @@ export XDG_CACHE_HOME="$HOME/.cache"
 export HISTFILE="${XDG_STATE_HOME}"/bash/history
 export CARGO_HOME="$XDG_DATA_HOME"/cargo
 
-eval "$(zoxide init bash)"
-eval "$(oh-my-posh init bash --config $XDG_CONFIG_HOME/oh-my-posh/.adrianc.omp.json)"
+# Path
+[[ ":$PATH:" == "*:$HOME/.local/bin:*" ]] || PATH="$HOME/.local/bin:$PATH"
 
 # Configuration
+pushd "$HOME/env/scripts"
+source ./init.sh
+popd
 
-bashrc_home="$PWD"
-cd "$PWD/../scripts"
-source "init.sh"
-cd "$bashrc_home"
+eval "$(zoxide init bash)"
+eval "$(oh-my-posh init bash --config $XDG_CONFIG_HOME/oh-my-posh/.adrianc.omp.json)"

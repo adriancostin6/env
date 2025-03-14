@@ -1,5 +1,4 @@
-shell_home="$PWD"
+pushd source
+source ./init.sh
+popd
 
-cd "$PWD/source"
-source "init.sh"
-cd "$shell_home"

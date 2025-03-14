@@ -42,6 +42,7 @@ git clone https://www.github.com/adriancostin6/env.git
 cd env
 
 declare -rA stows=(
+  ["bat"]="$HOME/.config/bat"
   ["git"]="$HOME/.config/git"
   ["zellij"]="$HOME/.config/zellij"
   ["nvim"]="$HOME/.config/nvim"
@@ -63,6 +64,10 @@ do
     fi
 done
 
-bashrc_home="$install_home/env/bash"
-# TODO: this appends each time. use sed to replace the line
-echo "cd $bashrc_home; source $bashrc; cd $install_home" >> "$HOME/.bashrc"
+printf "Adding user shell configuation files to $HOME/.bashrc.adrianc.\n"
+printf "Remember to source this in your $HOME/.bashrc.\n"
+printf "echo \"source ./bashrc.adrianc\" >> "$HOME/.bashrc"\n"
+
+echo "pushd \"$HOME/env/bash\" > /dev/null" >> "$HOME/.bashrc.adrianc"
+echo "source ./.bashrc.adrianc" >> "$HOME/.bashrc.adrianc"
+echo "popd" >> "$HOME/.bashrc.adrianc"

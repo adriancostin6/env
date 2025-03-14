@@ -1,5 +1,5 @@
 shopt -s globstar
 
-source_rglob $PWD/**/*.sh
+source_rglob **/*.sh
 
 shopt -u globstar
