@@ -12,12 +12,14 @@ export XDG_CACHE_HOME="$HOME/.cache"
 export HISTFILE="${XDG_STATE_HOME}"/bash/history
 export CARGO_HOME="$XDG_DATA_HOME"/cargo
 
-eval "$(zoxide init bash)"
-eval "$(oh-my-posh init bash --config $XDG_CONFIG_HOME/oh-my-posh/.adrianc.omp.json)"
+# Path
+export PATH=$HOME/.local/bin:$PATH
 
 # Configuration
-
 bashrc_home="$PWD"
 cd "$PWD/../scripts"
 source "init.sh"
 cd "$bashrc_home"
+
+eval "$(zoxide init bash)"
+eval "$(oh-my-posh init bash --config $XDG_CONFIG_HOME/oh-my-posh/.adrianc.omp.json)"

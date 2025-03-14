@@ -64,5 +64,5 @@ do
 done
 
 bashrc_home="$install_home/env/bash"
-# TODO: this appends each time. use sed to replace the line
-echo "cd $bashrc_home; source $bashrc; cd $install_home" >> "$HOME/.bashrc"
+printf "Adding user shell configuation files to $HOME. \n"
+echo "cd $bashrc_home; source .bashrc.adrianc; cd $install_home" > "$HOME/.bashrc.adrianc"
