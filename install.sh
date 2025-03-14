@@ -42,6 +42,7 @@ git clone https://www.github.com/adriancostin6/env.git
 cd env
 
 declare -rA stows=(
+  ["bat"]="$HOME/.config/bat"
   ["git"]="$HOME/.config/git"
   ["zellij"]="$HOME/.config/zellij"
   ["nvim"]="$HOME/.config/nvim"
