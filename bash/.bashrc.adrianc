@@ -27,6 +27,7 @@ pushd "$HOME/env/scripts"
 source ./init.sh
 popd
 
+
+# These have to stay here because we need the sourced config for them to work.
 exec_if zoxide init bash
 exec_if oh-my-posh init bash --config "$XDG_CONFIG_HOME/oh-my-posh/.adrianc.omp.json"
-
