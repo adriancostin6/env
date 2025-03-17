@@ -21,12 +21,15 @@ fi
 wants=(
     bat
     delta
+    dmenu
+    dwm
     eza
     fd
     fzf
     nvim
     oh-my-posh
     rg
+    st
     yazi
     zoxide
 )
@@ -64,10 +67,10 @@ do
     fi
 done
 
-printf "Adding user shell configuation files to $HOME/.bashrc.adrianc.\n"
+printf "Adding user shell configuation files to $HOME/.bashrc.$(whoami).\n"
 printf "Remember to source this in your $HOME/.bashrc.\n"
-printf "echo \"source ./bashrc.adrianc\" >> "$HOME/.bashrc"\n"
+printf "echo \"source ./bashrc.$(whoami)\" >> "$HOME/.bashrc"\n"
 
-echo "pushd \"$HOME/env/bash\" > /dev/null" >> "$HOME/.bashrc.adrianc"
-echo "source ./.bashrc.adrianc" >> "$HOME/.bashrc.adrianc"
-echo "popd" >> "$HOME/.bashrc.adrianc"
+echo "pushd \"$HOME/env/bash\" > /dev/null" >> "$HOME/.bashrc.$(whoami)"
+echo "source ./.bashrc.$(whoami)" >> "$HOME/.bashrc.$(whoami)"
+echo "popd" >> "$HOME/.bashrc.$(whoami)"

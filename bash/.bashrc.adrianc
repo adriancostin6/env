@@ -27,5 +27,6 @@ pushd "$HOME/env/scripts"
 source ./init.sh
 popd
 
-eval "$(zoxide init bash)"
-eval "$(oh-my-posh init bash --config $XDG_CONFIG_HOME/oh-my-posh/.adrianc.omp.json)"
+execif zoxide init bash
+execif oh-my-posh init bash --config "$XDG_CONFIG_HOME/oh-my-posh/.adrianc.omp.json"
+
