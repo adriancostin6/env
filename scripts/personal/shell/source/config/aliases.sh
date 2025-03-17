@@ -10,19 +10,19 @@ psme() {
   ps -aux | $grepper $(whoami)
 }
 
-alias_or_warn ll eza -alh
-alias_or_warn iv feh --fullscreen
-alias_or_warn fbat fzf --bind "enter:execute(bat {})"
+alias ll="eza -alh"
+alias iv='feh --fullscreen'
+alias fbat="fzf --bind 'enter:execute(bat {})'"
 
 # zellij
-alias_or_warn zt zellij options --theme $ZELLIJ_THEME
-alias_or_warn za zt --attach-to-session true --session-name
+alias zt="zellij options --theme $ZELLIJ_THEME"
+alias za='zt --attach-to-session true --session-name'
 
 # nvim
-alias_or_warn v nvim
-alias_or_warn vim nvim
-alias_or_warn vi nvim --clean
-alias_or_warn fv fzf --bind "enter:become(nvim {})"
+alias v='nvim'
+alias vim='nvim'
+alias vi='nvim --clean'
+alias fv="fzf --bind 'enter:become(nvim {})'"
 
 # git
 alias gs='git status'
