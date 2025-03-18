@@ -27,6 +27,8 @@ pushd "$HOME/env/scripts"
 source ./init.sh
 popd
 
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
 # These have to stay here because we need the sourced config for them to work.
 exec_if zoxide init bash
