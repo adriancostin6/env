@@ -4,7 +4,12 @@ local wezterm = require'wezterm'
 
 local appearance = wezterm.gui.get_appearance()
 
-M.default = appearance:find('Dark') and 'Catppuccin Frappe' or 'Catppuccin Latte'
+local pine_dawn = wezterm.plugin.require('https://github.com/neapsix/wezterm').dawn
+local pine_moon = wezterm.plugin.require('https://github.com/neapsix/wezterm').moon
+local pine = wezterm.plugin.require('https://github.com/neapsix/wezterm').main
+local schems = wezterm.get_builtin_color_schemes()
+
+M.default = appearance:find('Dark') and pine.colors() or pine_dawn.colors()
 M.delta = appearance:find('Dark') and 'delta-dark' or 'delta-light'
 M.system = appearance:find('Dark') and 'dark' or 'light'
 
@@ -13,6 +18,9 @@ local themes = {
     'Catppuccin Frappe',
     'Catppuccin Macchiato',
     'Catppuccin Mocha',
+    'Rose Pine',
+    'Rose Pine Dawn',
+    'Rose Pine Moon',
 }
 
 local function get_choices()
@@ -29,8 +37,29 @@ local function switch(window, pane, id, label)
     return
   end
 
-  local theme = label
-  window:set_config_overrides({ color_scheme = theme })
+  wezterm.log_info("Selected theme " .. label)
+  
+  local overrides = window:get_config_overrides{} or {}
+  local cases = {
+    ['Rose Pine'] = function()
+      overrides.colors = pine.colors()
+    end,
+    ['Rose Pine Dawn'] = function() 
+      overrides.colors = pine_dawn.colors()
+    end,
+    ['Rose Pine Moon'] = function()
+      overrides.colors = pine_moon.colors()
+    end,
+  }
+
+  local pick = cases[label] or function()
+    overrides.color_scheme = label
+  end
+  if not overrides then
+    pick()
+  end
+
+  window:set_config_overrides(overrides)
 end
 
 function M.select(window, pane)
@@ -46,6 +75,5 @@ function M.select(window, pane)
     pane
   )
 end
-
 
 return M
