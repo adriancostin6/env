@@ -1,0 +1,41 @@
+#!/bin/bash
+export LD_PRELOAD='/usr/$LIB/libctxXrandrhook.so'
+
+xsetroot -solid skyblue4
+
+# link with citrix with these programs
+LOGFILE=/u/adrianc/.citrix-logs
+CITRIX_BIN=/opt/Citrix/VDA/bin
+
+rm -rf $LOGFILE
+$CITRIX_BIN/ctxaudio                &>> $LOGFILE &
+$CITRIX_BIN/ctxdmmount              &>> $LOGFILE &
+$CITRIX_BIN/ctxclipboard            &>> $LOGFILE &
+$CITRIX_BIN/ctxeuem                 &>> $LOGFILE &
+$CITRIX_BIN/ctxfido                 &>> $LOGFILE &
+$CITRIX_BIN/ctxaudio                &>> $LOGFILE &
+$CITRIX_BIN/ctxfiletransfer         &>> $LOGFILE &
+$CITRIX_BIN/ctxctl                  &>> $LOGFILE &
+$CITRIX_BIN/ctxssmm                 &>> $LOGFILE &
+$CITRIX_BIN/ctxtui                  &>> $LOGFILE &
+$CITRIX_BIN/ctxism -d -w 4          &>> $LOGFILE &
+$CITRIX_BIN/ctxticketmgr            &>> $LOGFILE &
+$CITRIX_BIN/ctxssonctl.sh           &>> $LOGFILE &
+$CITRIX_BIN/ctxmrvc                 &>> $LOGFILE &
+$CITRIX_BIN/ctxnsap                 &>> $LOGFILE &
+$CITRIX_BIN/ctxlpmngt               &>> $LOGFILE &
+$CITRIX_BIN/ctxtimerecord           &>> $LOGFILE &
+$CITRIX_BIN/ctxtwi                  &>> $LOGFILE &
+$CITRIX_BIN/ctxusbsess              &>> $LOGFILE &
+$CITRIX_BIN/gfxindicator            &>> $LOGFILE &
+start-pulse-audio-x11               &>> $LOGFILE &
+/usr/bin/se-applet                  &>> $LOGFILE &
+/usr/bin/spice-streaming-agent      &>> $LOGFILE &
+xdg-user-dirs-gtk-update            &>> $LOGFILE &
+/usr/bin/vmware-user-suid-wrapper   &>> $LOGFILE &
+
+xsetroot -solid skyblue4
+
+/u/ccmaster/bin/fluxbox &
+
+wait

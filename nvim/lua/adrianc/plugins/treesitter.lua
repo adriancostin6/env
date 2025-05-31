@@ -32,7 +32,7 @@ return {
         "java",
         "javascript",
         "json",
-        "latex",
+--        "latex",
         "lua",
         "luadoc",
         "luap",

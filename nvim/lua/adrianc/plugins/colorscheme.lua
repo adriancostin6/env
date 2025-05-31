@@ -21,6 +21,16 @@ return {
     lazy = true,
     opts = { style = "moon" },
   },
+  -- rose pine
+  {
+    "rose-pine/neovim",
+    name = "rose-pine",
+    lazy = false,
+    priority = 1000,
+    config = function()
+        vim.cmd.colorscheme(theme('rose-pine', 'rose-pine-dawn'))
+    end
+  },
 
   -- catppuccin
   {

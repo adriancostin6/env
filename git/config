@@ -2,13 +2,13 @@
 #
 [core]
 	pager = delta
-[interactive]
-	diffFilter = delta --color-only --features=interactive
+[user]
+	name = Adrian Costin
 [include]
 	path=catppuccin.gitconfig
-[includeIf "gitdir:~/repos/work"]
+[includeIf "gitdir:/localdev/adrianc/repos/work/"]
 	path=.gitconfig-work
-[includeIf "gitdir:~/repos/personal"]
+[includeIf "gitdir:/localdev/adrianc/repos/personal/"]
 	path=.gitconfig-personal
 [pull]
 	rebase = true
@@ -16,8 +16,13 @@
 	ff = only
 	conflictstyle = diff3
 	tool = custom
+[interactive]
+	diffFilter = delta --color-only --features=interactive
 [mergetool "custom"]
 	cmd = "nvim -d -c \"4wincmd w\" -c \"wincmd J\" \"$LOCAL\" \"$BASE\" \"$REMOTE\" \"$MERGED\""
-[user]
-	email = adriancostin6@gmail.com
-	name = Adrian Costin
+[credential "https://github.com"]
+	helper = 
+	helper = !/u/adrianc/.local/bin/apps/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/u/adrianc/.local/bin/apps/gh auth git-credential

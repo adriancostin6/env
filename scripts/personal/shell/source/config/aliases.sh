@@ -10,13 +10,10 @@ psme() {
   ps -aux | $grepper $(whoami)
 }
 
-alias ll="eza -alh"
+alias ll="eza --group-directories-first -alh"
 alias iv='feh --fullscreen'
 alias fbat="fzf --bind 'enter:execute(bat {})'"
 
-# zellij
-alias zt="zellij options --theme $ZELLIJ_THEME"
-alias za='zt --attach-to-session true --session-name'
 
 # nvim
 alias v='nvim'
