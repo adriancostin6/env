@@ -2,8 +2,8 @@
 vim.filetype.add({
   extension = {
     sbs = 'cpp',
-  }
+  },
   pattern = {
-    ['SCons*'] = 'python',
-  }
+    ['SCons.*'] = 'python',
+  },
 })
