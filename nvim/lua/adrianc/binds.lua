@@ -27,8 +27,4 @@ function binds.lsp(opts)
     end, opts)
 end
 
-function binds.markdown(opts)
-    vim.keymap.set('n', 'gf', ':e ' .. vim.env.HOME .. '/doc/adrian-wiki/work/notes/<cfile><CR>' , opts)
-end
-
 return binds
