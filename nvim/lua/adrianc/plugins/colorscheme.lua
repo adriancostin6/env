@@ -4,6 +4,17 @@ end
 
 return {
 
+  -- rose pine
+  {
+    "rose-pine/neovim",
+    name = "rose-pine",
+    lazy = false,
+    priority = 1000,
+    config = function ()
+        vim.cmd.colorscheme('rose-pine')
+    end,
+  },
+
   -- tokyonight
   {
     "folke/tokyonight.nvim",
@@ -14,12 +25,8 @@ return {
   -- catppuccin
   {
     "catppuccin/nvim",
-    lazy = false,
-    priority = 1000,
+    lazy = true,
     name = "catppuccin",
-    config = function ()
-        vim.cmd.colorscheme(theme('catppuccin-frappe', 'catppuccin-latte'))
-    end,
     opts = {
       integrations = {
         gitsigns = true,
