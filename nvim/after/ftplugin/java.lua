@@ -1,16 +1,17 @@
 -- +-----+
 -- | LSP |
 -- +-----+----------------------------------------------------------------------
-local jdtls
-if vim.loop.os_uname().sysname == 'Windows_NT' then
-  jdtls = 'jdtls.cmd'
-else
-  jdtls = 'jdtls'
-end
 
 -- See `:help vim.lsp.start_client` for an overview of the supported `config` options.
 local project = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
 local workspace = vim.env.HOME .. '/.nvim-jdtls/' .. project
+local config_path
+if vim.loop.os_uname().sysname == 'Windows_NT' then
+  config_path = vim.fn.stdpath('data') .. '/mason/packages/jdtls/config_windows'
+else
+  config_path = vim.fn.stdpath('data') .. '/mason/packages/jdtls/config_linux' 
+end
+local launcher = vim.fn.stdpath('data') .. '/mason/packages/jdtls/plugins/org.eclipse.equinox.launcher_1.7.0.v20250331-1702.jar'
 
 local config = {
   -- The command that starts the language server
@@ -32,16 +33,14 @@ local config = {
     '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
 
     -- 💀
-    -- TODO: change based on OS and wildcard for version
-    '-jar', vim.fn.stdpath('data') .. '/mason/packages/jdtls/plugins/org.eclipse.equinox.launcher_1.6.900.v20240613-2009.jar',
+    '-jar', launcher,
          -- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                                       ^^^^^^^^^^^^^^
          -- Must point to the                                                     Change this to
          -- eclipse.jdt.ls installation                                           the actual version
 
 
     -- 💀
-    -- TODO: change based on OS
-    '-configuration', vim.fn.stdpath('data') .. '/mason/packages/jdtls/config_linux',
+    '-configuration',  config_path,
                     -- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^^^^^^
                     -- Must point to the                      Change to one of `linux`, `win` or `mac`
                     -- eclipse.jdt.ls installation            Depending on your system.
@@ -66,8 +65,6 @@ local config = {
         -- Problem: jdtls won't find dependendencies automatically if not a maven project
         -- Solution: specify dependencies manually
         referencedLibraries = {
-            --TODO: think of how to specify this per project
-            vim.env.SILVER_HOME .. '/test/regression-test/GUI/sikuli/jar/linux/sikulixapi-2.0.5-modified-lux.jar',
         },
 
         -- Problem: Default path is "src/main/java" (https://github.com/mfussenegger/nvim-jdtls/discussions/609#discussioncomment-8212164)
