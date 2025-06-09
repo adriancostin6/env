@@ -38,10 +38,11 @@ do
   command -v $pkg &>/dev/null || { printf "Missing wanted package: %s\nConsider installing for better experience.\n" $pkg; continue; }
 done
 
-set -e
-
 printf "Cloning env repo.\n"
 git clone https://www.github.com/adriancostin6/env.git
+
+set -e
+
 cd env
 
 declare -rA stows=(
