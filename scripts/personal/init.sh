@@ -1,5 +1,5 @@
-PATH="$PWD/shell:$PATH"
+PATH="$PWD/bin:$PATH"
 
-pushd shell
+pushd src
 source ./init.sh
 popd
