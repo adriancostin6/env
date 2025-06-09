@@ -23,4 +23,6 @@ do
   sleep 1m
 done &
 
+PATH="$HOME/.local/bin:$PATH"
+xrandr --size 1920x1080
 exec dwm
