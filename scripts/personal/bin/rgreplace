@@ -13,8 +13,8 @@ PATTERN="${@: -1}"
 set -- "${@:1:${#}-1}"
 
 if [ $# -eq 0 ]; then
-    rg --files-with-matches "$PATTERN" | xargs -d "\n" sed -i "s/$PATTERN/$REPLACEMENT/g"
+    rg --files-with-matches "$PATTERN" | xargs -d "\n" sed -i "s|$PATTERN|$REPLACE|g"
 else
-    rg --files-with-matches "$*"  "$PATTERN" | xargs -d "\n" sed -i "s/$PATTERN/$REPLACEMENT/g"
+    rg --files-with-matches "$*"  "$PATTERN" | xargs -d "\n" sed -i "s|$PATTERN|$REPLACE|g"
 fi
 
