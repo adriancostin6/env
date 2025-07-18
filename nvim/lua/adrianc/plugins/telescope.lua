@@ -9,7 +9,11 @@ return {
             'nvim-telescope/telescope-fzf-native.nvim',
             build = 'make',
             cond = function()
-                return vim.fn.executable 'make' == 1
+                local hasMake = vim.fn.executable 'make' == 1
+                if not hasMake then
+                  print("Cannot build fzf native, please install make.")
+                end
+                return hasMake
             end
         },
     },
