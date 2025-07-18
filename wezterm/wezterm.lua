@@ -2,6 +2,8 @@ local wezterm = require'wezterm'
 
 local themes = require'themes'
 local binds = require'binds'
+local utils = require'utils'
+local operating_system = require'operating_system'
 
 -- +--------+
 -- | events |
@@ -15,6 +17,11 @@ config = {}
 
 config.prefer_egl = true
 config.enable_tab_bar = false
+
+config.font = wezterm.font_with_fallback({
+  { family='IosevkaTermSlab Nerd Font', weight='Light' },
+  'Cascadia Code',
+})
 
 if type(themes.default) == "string" then
     config.color_scheme = themes.default
@@ -39,5 +46,12 @@ config.set_environment_variables = {
 }
 
 config.keys = binds
+
+local isWin = operating_system.isWindows()
+config.default_prog = utils.ternary(
+  isWin,
+  { 'pwsh.exe' },
+  { 'bash' }
+)
 
 return config

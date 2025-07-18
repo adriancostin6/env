@@ -7,7 +7,7 @@ local appearance = wezterm.gui.get_appearance()
 local pine_dawn = wezterm.plugin.require('https://github.com/neapsix/wezterm').dawn
 local pine_moon = wezterm.plugin.require('https://github.com/neapsix/wezterm').moon
 local pine = wezterm.plugin.require('https://github.com/neapsix/wezterm').main
-local schems = wezterm.get_builtin_color_schemes()
+local schemes = wezterm.get_builtin_color_schemes()
 
 M.default = appearance:find('Dark') and pine.colors() or pine_dawn.colors()
 M.delta = appearance:find('Dark') and 'delta-dark' or 'delta-light'
@@ -38,7 +38,7 @@ local function switch(window, pane, id, label)
   end
 
   wezterm.log_info("Selected theme " .. label)
-  
+
   local overrides = window:get_config_overrides{} or {}
   local cases = {
     ['Rose Pine'] = function()
