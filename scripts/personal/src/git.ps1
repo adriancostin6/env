@@ -1,6 +1,3 @@
-# +---------+
-# | Helpers |
-# +---------+------------------------------------------------------------------
 function Git-FuzzyStatus {
     $repo_root = git rev-parse --show-toplevel
     $git_status = git status --porcelain | fzf --multi
@@ -15,10 +12,7 @@ function Git-FuzzyStatus {
     return $files
 }
 
-# +---------+
-# | Aliases |
-# +---------+------------------------------------------------------------------
-function gadd {
+function Do-GitAddFuzzy {
     $files = Git-FuzzyStatus
 
     foreach($file in $files) {
@@ -26,22 +20,26 @@ function gadd {
     }
 }
 
-function gblame {
+function Do-GitBlame {
     fzf --bind "enter:become(git blame {})"
 }
 
-function gs {
+function Do-GitStatus {
     git status
 }
 
-function gsu {
+function Do-GitStatusUntracked {
     git status -uno
 }
 
-function glo {
+function Do-GitLogOneline {
     git log --oneline
 }
 
-function gll {
+function Do-GitLog {
+    git log
+}
+
+function Do-GitLogFull {
     git log -p
 }
