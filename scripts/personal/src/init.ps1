@@ -1,3 +1,1 @@
-Get-ChildItem ./ -Recurse -Filter "*.ps1" | ForEach {
-    . $_
-}
+. ./git.ps1
