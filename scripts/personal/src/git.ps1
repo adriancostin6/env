@@ -1,3 +1,6 @@
+# +---------+
+# | Getters |
+# +---------+------------------------------------------------------------------
 function Get-FuzzyGitStatusFiles {
     $repo_root = git rev-parse --show-toplevel
     $git_status = git status --porcelain | fzf --multi
@@ -11,30 +14,67 @@ function Get-FuzzyGitStatusFiles {
 
     return $files
 }
-
-function Git-FuzzyHash {
+function Get-FuzzyGitHash {
     $log_line = git log --oneline | fzf --ansi
     $split= $log_line -split " "
     $hash = $split[0]
     return $hash
 }
+function Get-OwnedGitBranches {
+    param (
+        [Parameter(Mandatory)][string] $Name
+    )
 
+    $args = @(
+        "--sort=committerdate",
+        "--format='%(committerdate) %09 %(authorname) %09 %(refname)'",
+        "refs/remotes"
+    )
+    $refs = git for-each-ref @args
+    $dont_match = "[S-Z]-[0-9][0-9][0-9][0-9]\.[0-9][0-9]"
+    $non_matching_refs = $refs | Select-String -NotMatch "$dont_match"
+    $origin_refs = $non_matching_refs | Select-String "refs/remotes/origin/"
+    $my_refs = $origin_refs | Select-String "$Name"
+    $exclude_head = $my_refs | Select-String -NotMatch "refs/remotes/origin/HEAD"
+    return $exclude_head
+}
+
+# +---------------+
+# | General calls |
+# +---------------+------------------------------------------------------------
+function Call-GitStatus {
+    git status
+}
+function Call-GitStatusModified {
+    git status -uno
+}
+function Call-GitLog {
+    git log
+}
+function Call-GitLogOneline {
+    git log --oneline
+}
+function Call-GitLogFull {
+    git log -p
+}
+
+# +-------------+
+# | Fuzzy calls |
+# +-------------+--------------------------------------------------------------
 function Call-FuzzyGitRebaseInteractive {
     param (
         [switch] $Squash
     )
-    $hash = Git-FuzzyHash
+    $hash = Get-FuzzyGitHash
 
     if ($Squash) {
-        Write-Output "Present"
         git rebase --interactive --autosquash $hash
     } else {
-        Write-Output "Not present"
         git rebase --interactive $hash
     }
 }
 
-function Do-GitAddFuzzy {
+function Call-FuzzyGitAdd {
     $files = Get-FuzzyGitStatusFiles
 
     foreach($file in $files) {
@@ -42,26 +82,7 @@ function Do-GitAddFuzzy {
     }
 }
 
-function Do-GitBlame {
+function Call-FuzzyGitBlame {
     fzf --bind "enter:become(git blame {})"
 }
 
-function Do-GitStatus {
-    git status
-}
-
-function Do-GitStatusUntracked {
-    git status -uno
-}
-
-function Do-GitLogOneline {
-    git log --oneline
-}
-
-function Do-GitLog {
-    git log
-}
-
-function Do-GitLogFull {
-    git log -p
-}
