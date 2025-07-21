@@ -1,4 +1,4 @@
-function Git-FuzzyStatus {
+function Get-FuzzyGitStatusFiles {
     $repo_root = git rev-parse --show-toplevel
     $git_status = git status --porcelain | fzf --multi
 
@@ -12,8 +12,30 @@ function Git-FuzzyStatus {
     return $files
 }
 
+function Git-FuzzyHash {
+    $log_line = git log --oneline | fzf --ansi
+    $split= $log_line -split " "
+    $hash = $split[0]
+    return $hash
+}
+
+function Call-FuzzyGitRebaseInteractive {
+    param (
+        [switch] $Squash
+    )
+    $hash = Git-FuzzyHash
+
+    if ($Squash) {
+        Write-Output "Present"
+        git rebase --interactive --autosquash $hash
+    } else {
+        Write-Output "Not present"
+        git rebase --interactive $hash
+    }
+}
+
 function Do-GitAddFuzzy {
-    $files = Git-FuzzyStatus
+    $files = Get-FuzzyGitStatusFiles
 
     foreach($file in $files) {
         git add $file
