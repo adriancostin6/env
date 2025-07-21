@@ -57,6 +57,24 @@ function Call-GitLogOneline {
 function Call-GitLogFull {
     git log -p
 }
+function Call-GitCloneWorktree {
+    param (
+        [Parameter(Mandatory)][string] $Url
+    )
+    $split_url = $Url -split "/"
+    $repo_name = $split_url[-1] -replace ".git", ""
+
+    New-Item -Name "$repo_name" -Type Directory
+    Push-Location "$repo_name"
+
+    git clone --bare "$Url" .bare
+    "gitdir: ./.bare" | Out-File ".git"
+
+    git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+    git fetch origin
+
+    Pop-Location
+}
 
 # +-------------+
 # | Fuzzy calls |
