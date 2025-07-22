@@ -1,3 +1,10 @@
+# +-------+
+# | State |
+# +-------+--------------------------------------------------------------------
+$Global:GitState = @{
+    LastHash = $null
+}
+
 # +---------+
 # | Getters |
 # +---------+------------------------------------------------------------------
@@ -14,12 +21,14 @@ function Get-FuzzyGitStatusFiles {
 
     return $files
 }
+
 function Get-FuzzyGitHash {
     $log_line = git log --oneline | fzf --ansi
     $split= $log_line -split " "
     $hash = $split[0]
     return $hash
 }
+
 function Get-OwnedGitBranches {
     param (
         [Parameter(Mandatory)][string] $Name
@@ -45,18 +54,23 @@ function Get-OwnedGitBranches {
 function Call-GitStatus {
     git status
 }
+
 function Call-GitStatusModified {
     git status -uno
 }
+
 function Call-GitLog {
     git log
 }
+
 function Call-GitLogOneline {
     git log --oneline
 }
+
 function Call-GitLogFull {
     git log -p
 }
+
 function Call-GitCloneWorktree {
     param (
         [Parameter(Mandatory)][string] $Url
@@ -76,9 +90,44 @@ function Call-GitCloneWorktree {
     Pop-Location
 }
 
+function Call-GitFixup {
+    param (
+        [string] $Type
+    )
+    $hash = $Global:GitState.LastHash
+    if (!$hash) {
+        Write-Output "LastHash is null. Please set with Call-FuzzyGitFixup"
+        return
+    }
+
+    if ($Type) {
+        git commit --fixup="${Type}:${hash}"
+    } else {
+        git commit --fixup "$hash"
+    }
+}
+
 # +-------------+
 # | Fuzzy calls |
 # +-------------+--------------------------------------------------------------
+function Call-FuzzyGitFixup {
+    param (
+        [switch] $DryRun,
+        [string] $Type
+    )
+    $Global:GitState.LastHash = Get-FuzzyGitHash
+
+    if ($DryRun) {
+        return
+    }
+
+    if ($Type) {
+        git commit --fixup="${Type}:${Global:GitState.LastHash}"
+    } else {
+        git commit --fixup "$Global:GitState.LastHash"
+    }
+}
+
 function Call-FuzzyGitRebaseInteractive {
     param (
         [switch] $Squash
@@ -103,4 +152,3 @@ function Call-FuzzyGitAdd {
 function Call-FuzzyGitBlame {
     fzf --bind "enter:become(git blame {})"
 }
-
