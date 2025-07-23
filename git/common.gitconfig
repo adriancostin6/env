@@ -6,5 +6,7 @@
 [merge]
 	ff = only
 	conflictstyle = diff3
-[rebase]
-	autosquash = true
+[core]
+	autocrlf = false
+[rebsae]
+	autosquash = false
