@@ -48,9 +48,9 @@ function Get-OwnedGitBranches {
     return $exclude_head
 }
 
-# +---------------+
-# | General calls |
-# +---------------+------------------------------------------------------------
+# +-------+
+# | Calls |
+# +-------+--------------------------------------------------------------------
 function Call-GitStatus {
     git status
 }
@@ -94,11 +94,10 @@ function Call-GitFixup {
     param (
         [string] $Type
     )
-    $hash = $Global:GitState.LastHash
-    if (!$hash) {
-        Write-Output "LastHash is null. Please set with Call-FuzzyGitFixup"
-        return
+    if (!$Global:GitState.LastHash) {
+        Call-FuzzyGitFixup -DryRun
     }
+    $hash = $Global:GitState.LastHash
 
     if ($Type) {
         git commit --fixup="${Type}:${hash}"
