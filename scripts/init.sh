@@ -1,20 +1,5 @@
-function source_rglob {
-    for script in "$@"; do
-        local script_dir=$(dirname "$script")
-        if [ "$script" = "init.sh" ]; then
-            continue
-        fi
-        source "./$script"
-    done
-}
+PATH="$PWD/bin:$PATH"
 
-pushd personal
+pushd src
 source ./init.sh
 popd
-
-if [ -d work ]; then
-    pushd work
-    source ./init.sh
-    popd
-fi
-

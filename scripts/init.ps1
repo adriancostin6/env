@@ -1,3 +1,3 @@
-Push-Location personal
+Push-Location src
 . ./init.ps1
 Pop-Location
