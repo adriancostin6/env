@@ -49,29 +49,29 @@ function Get-OwnedGitBranches {
 }
 
 # +-------+
-# | Calls |
+# | Invokes |
 # +-------+--------------------------------------------------------------------
-function Call-GitStatus {
+function Invoke-GitStatus {
     git status
 }
 
-function Call-GitStatusModified {
+function Invoke-GitStatusModified {
     git status -uno
 }
 
-function Call-GitLog {
+function Invoke-GitLog {
     git log
 }
 
-function Call-GitLogOneline {
+function Invoke-GitLogOneline {
     git log --oneline
 }
 
-function Call-GitLogFull {
+function Invoke-GitLogFull {
     git log -p
 }
 
-function Call-GitCloneWorktree {
+function Invoke-GitCloneWorktree {
     param (
         [Parameter(Mandatory)][string] $Url
     )
@@ -90,12 +90,12 @@ function Call-GitCloneWorktree {
     Pop-Location
 }
 
-function Call-GitFixup {
+function Invoke-GitFixup {
     param (
         [string] $Type
     )
     if (!$Global:GitState.LastHash) {
-        Call-FuzzyGitFixup -DryRun
+        Invoke-FuzzyGitFixup -DryRun
     }
     $hash = $Global:GitState.LastHash
 
@@ -109,7 +109,7 @@ function Call-GitFixup {
 # +-------------+
 # | Fuzzy calls |
 # +-------------+--------------------------------------------------------------
-function Call-FuzzyGitFixup {
+function Invoke-FuzzyGitFixup {
     param (
         [switch] $DryRun,
         [string] $Type
@@ -127,7 +127,7 @@ function Call-FuzzyGitFixup {
     }
 }
 
-function Call-FuzzyGitRebaseInteractive {
+function Invoke-FuzzyGitRebaseInteractive {
     param (
         [switch] $Squash
     )
@@ -140,7 +140,7 @@ function Call-FuzzyGitRebaseInteractive {
     }
 }
 
-function Call-FuzzyGitAdd {
+function Invoke-FuzzyGitAdd {
     $files = Get-FuzzyGitStatusFiles
 
     foreach($file in $files) {
@@ -148,6 +148,6 @@ function Call-FuzzyGitAdd {
     }
 }
 
-function Call-FuzzyGitBlame {
+function Invoke-FuzzyGitBlame {
     fzf --bind "enter:become(git blame {})"
 }
