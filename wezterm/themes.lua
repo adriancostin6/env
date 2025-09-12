@@ -10,7 +10,7 @@ local pine = wezterm.plugin.require('https://github.com/neapsix/wezterm').main
 local schemes = wezterm.get_builtin_color_schemes()
 
 M.default = appearance:find('Dark') and pine.colors() or pine_dawn.colors()
-M.delta = appearance:find('Dark') and 'delta-dark' or 'delta-light'
+M.delta = appearance:find('Dark') and 'catppuccin-frappe' or 'catppuccin-latte'
 M.system = appearance:find('Dark') and 'dark' or 'light'
 
 local themes = {
