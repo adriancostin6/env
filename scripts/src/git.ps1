@@ -34,12 +34,12 @@ function Get-OwnedGitBranches {
         [Parameter(Mandatory)][string] $Name
     )
 
-    $args = @(
+    $git_args = @(
         "--sort=committerdate",
         "--format='%(committerdate) %09 %(authorname) %09 %(refname)'",
         "refs/remotes"
     )
-    $refs = git for-each-ref @args
+    $refs = git for-each-ref @git_args
     $dont_match = "[S-Z]-[0-9][0-9][0-9][0-9]\.[0-9][0-9]"
     $non_matching_refs = $refs | Select-String -NotMatch "$dont_match"
     $origin_refs = $non_matching_refs | Select-String "refs/remotes/origin/"
