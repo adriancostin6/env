@@ -51,31 +51,5 @@ return {
         }
         require('telescope').load_extension('fzf')
     end,
-    keys = {
-        {
-            "<leader>b",
-            "<cmd>Telescope buffers theme=ivy<cr>",
-            desc = "Buffers"
-        },
-        {
-            "<leader>g",
-            "<cmd>Telescope live_grep theme=ivy<cr>",
-            desc = "Live Grep"
-        },
-        {
-            "<leader>c",
-            "<cmd>Telescope command_history theme=ivy<cr>",
-            desc = "Command History"
-        },
-        {
-            "<leader>h",
-            "<cmd>Telescope oldfiles theme=ivy<cr>",
-            desc = "Recent"
-        },
-        {
-            "<leader>f",
-            "<cmd>Telescope find_files theme=ivy<cr>",
-            desc = "Find File"
-        },
-    },
+    keys = require'adrianc.binds'.telescope,
 }
