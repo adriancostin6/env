@@ -106,6 +106,14 @@ function Invoke-GitFixup {
     }
 }
 
+function Invoke-GitFixupReword {
+    Invoke-GitFixup -Type reword
+}
+
+function Invoke-GitFixupAmend {
+    Invoke-GitFixup -Type amend
+}
+
 # +-------------+
 # | Fuzzy calls |
 # +-------------+--------------------------------------------------------------
