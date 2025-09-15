@@ -23,13 +23,7 @@ config.font = wezterm.font_with_fallback({
   'Cascadia Code',
 })
 
-if type(themes.default) == "string" then
-    config.color_scheme = themes.default
-    config.colors = nil
-else
-    config.colors = themes.default
-    config.color_scheme = nil
-end
+config.color_scheme = themes.default
 
 config.window_padding = {
   top     = 0,
@@ -47,11 +41,10 @@ config.set_environment_variables = {
 
 config.keys = binds
 
-local isWin = operating_system.isWindows()
-config.default_prog = utils.ternary(
-  isWin,
-  { 'pwsh.exe' },
-  { 'bash' }
-)
+if operating_system.isWindows() then
+  config.default_prog = { 'pwsh.exe' }
+else
+  config.default_prog = { 'bash' }
+end
 
 return config

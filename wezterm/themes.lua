@@ -3,62 +3,40 @@ local M = {}
 local wezterm = require'wezterm'
 
 local appearance = wezterm.gui.get_appearance()
-
-local pine_dawn = wezterm.plugin.require('https://github.com/neapsix/wezterm').dawn
-local pine_moon = wezterm.plugin.require('https://github.com/neapsix/wezterm').moon
-local pine = wezterm.plugin.require('https://github.com/neapsix/wezterm').main
 local schemes = wezterm.get_builtin_color_schemes()
 
-M.default = appearance:find('Dark') and pine.colors() or pine_dawn.colors()
+if appearance:find('Dark') then
+  M.default = 'rose-pine'
+  M.delta = 'catppuccin-frappe'
+  M.system = 'dark'
+else
+  M.default = 'rose-pine-dawn'
+  M.delta = 'catppuccin-latte'
+  M.system = 'light'
+end
+
+M.default = appearance:find('Dark') and 'rose-pine' or 'rose-pine-dawn'
 M.delta = appearance:find('Dark') and 'catppuccin-frappe' or 'catppuccin-latte'
 M.system = appearance:find('Dark') and 'dark' or 'light'
 
-local themes = {
-    'Catppuccin Latte',
-    'Catppuccin Frappe',
-    'Catppuccin Macchiato',
-    'Catppuccin Mocha',
-    'Rose Pine',
-    'Rose Pine Dawn',
-    'Rose Pine Moon',
-}
-
 local function get_choices()
   local choices = {}
-  for _, theme in ipairs(themes) do
-    table.insert(choices, { label = theme, id = theme})
+  for theme, _ in pairs(schemes) do
+    table.insert(choices, { label = theme})
   end
   return choices
 end
 
 local function switch(window, pane, id, label)
-  if not i and not label then
+  if not id and not label then
     wezterm.log_error("Theme is undefined.")
     return
   end
 
   wezterm.log_info("Selected theme " .. label)
-
   local overrides = window:get_config_overrides{} or {}
-  local cases = {
-    ['Rose Pine'] = function()
-      overrides.colors = pine.colors()
-    end,
-    ['Rose Pine Dawn'] = function() 
-      overrides.colors = pine_dawn.colors()
-    end,
-    ['Rose Pine Moon'] = function()
-      overrides.colors = pine_moon.colors()
-    end,
-  }
 
-  local pick = cases[label] or function()
-    overrides.color_scheme = label
-  end
-  if not overrides then
-    pick()
-  end
-
+  overrides.color_scheme = label
   window:set_config_overrides(overrides)
 end
 
