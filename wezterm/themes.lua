@@ -7,17 +7,11 @@ local schemes = wezterm.get_builtin_color_schemes()
 
 if appearance:find('Dark') then
   M.default = 'rose-pine'
-  M.delta = 'catppuccin-frappe'
   M.system = 'dark'
 else
   M.default = 'rose-pine-dawn'
-  M.delta = 'catppuccin-latte'
   M.system = 'light'
 end
-
-M.default = appearance:find('Dark') and 'rose-pine' or 'rose-pine-dawn'
-M.delta = appearance:find('Dark') and 'catppuccin-frappe' or 'catppuccin-latte'
-M.system = appearance:find('Dark') and 'dark' or 'light'
 
 local function get_choices()
   local choices = {}
@@ -48,7 +42,7 @@ function M.select(window, pane)
       title = 'Color schemes',
       choices = choices,
       fuzzy = true,
-      fuzzy_description = "Fuzzy select color scheme.",
+      fuzzy_description = "Select color scheme.",
     }),
     pane
   )

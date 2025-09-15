@@ -36,7 +36,6 @@ config.set_environment_variables = {
     EDITOR='nvim',
     DEV_HOME              = '~/repos',
     SYSTEM_THEME          = themes.system,
-    DELTA_FEATURES        = themes.delta,
 }
 
 config.keys = binds

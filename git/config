@@ -3,5 +3,4 @@
 [include]
 	path = common.gitconfig
 	path = tools.gitconfig
-	path = colors.gitconfig
 	path = includeif.gitconfig
