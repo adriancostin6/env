@@ -1,3 +1,9 @@
+$bat_theme=Get-DefaultBatTheme
+if ($bat_theme == 'ansi') {
+    return
+}
+$env:BAT_THEME=$bat_theme
+
 if (-not (Get-Command -CommandType Application -ErrorAction SilentlyContinue bat)) {
     Write-Error "bat: command not found, please install it for pretty colors."
     return
@@ -8,6 +14,34 @@ $bat_config = bat --config-dir
 if (-not (Test-Path -Path $bat_config)) {
     Write-Warning "bat: theme folder not found, creating."
     New-Item -Path $themes -ItemType Directory -Force
+}
+
+$Global:BatThemes = @(
+    'Catppuccin Latte',
+    'Catppuccin Frappe',
+    'Catppuccin Macchiato',
+    'Catppuccin Mocha'
+)
+function Update-BatTheme {
+    param (
+        [switch] $BuildCache
+    )
+
+    if ($BuildCache) {
+        bat cache --build
+        Clear-Host
+    }
+
+    $theme = $Global:BatThemes | fzf
+    $env:BAT_THEME=$theme
+}
+
+function Get-DefaultBatTheme {
+    if (Test-Path -Path "${HOME}/.bat") {
+        $theme = Get-Content -Path "${HOME}/.bat"
+        return $theme
+    }
+    return 'ansi'
 }
 
 if (-not (Test-Path -Path $bat_config\themes\*)) {
@@ -33,18 +67,8 @@ if (-not (Test-Path -Path $bat_config\themes\*)) {
         return
     }
 
-    Write-Output "bat: pretty colors have been stored in ${bat_config}\themes. Please run 'bat cache --build.'"
-}
-
-$env:BAT_THEME='ansi'
-$Global:BatThemes = @(
-    'ansi',
-    'Catppuccin Latte',
-    'Catppuccin Frappe',
-    'Catppuccin Macchiato',
-    'Catppuccin Mocha'
-)
-function Invoke-UpdateBatTheme {
-    $theme = $Global:BatThemes | fzf
-    $env:BAT_THEME=$theme
+    Update-BatTheme -BuildCache
+    $env:BAT_THEME | Out-File -FilePath "${HOME}/.bat"
+    Clear-Host
+    Write-Output "bat: default theme set to $env:BAT_THEME."
 }
