@@ -1,56 +1,63 @@
-# +-------+
-# | State |
-# +-------+--------------------------------------------------------------------
 $Global:GitState = @{
     LastHash = $null
 }
 
-# +---------+
-# | Getters |
-# +---------+------------------------------------------------------------------
+$env:GitPs1Cache = "${env:PWSH_CFG_CACHE_DIR}/git"
+New-Item -Force -ItemType Directory -Path $env:GitPs1Cache | Out-Null
+
+[string] $hashFile = "${env:GitPs1Cache}/hash"
+if (Test-Path -Path $hashFile) {
+    $Global:GitState.LastHash = Get-Content -Path $hashFile
+}
+
 function Get-FuzzyGitStatusFiles {
-    $repo_root = git rev-parse --show-toplevel
-    $git_status = git status --porcelain | fzf --multi
+    [OutputType([System.Collections.ArrayList])]
+
+    [string] $repoRoot = git rev-parse --show-toplevel
+    [string] $gitStatus = git status --porcelain | fzf --multi
 
     $files = [System.Collections.ArrayList]@()
-    foreach($line in $git_status) {
-        $tokens = $line -split " "
-        $file = $tokens[-1]
-        [void]$files.add("$repo_root/$file")
+    foreach($line in $gitStatus) {
+        [string[]] $tokens = $line -split " "
+        [string] $file = $tokens[-1]
+        [void] $files.add("$repoRoot/$file")
     }
 
     return $files
 }
 
 function Get-FuzzyGitHash {
-    $log_line = git log --oneline | fzf --ansi
-    $split= $log_line -split " "
-    $hash = $split[0]
+    [OutputType([string])]
+
+    [string] $log_line = git log --oneline | fzf --ansi
+    [string[]] $split= $log_line -split " "
+    [string] $hash = $split[0]
+
     return $hash
 }
 
 function Get-OwnedGitBranches {
+    [OutputType([string[]])]
+
     param (
         [Parameter(Mandatory)][string] $Name
     )
 
-    $git_args = @(
+    [string[]] $git_args = @(
         "--sort=committerdate",
         "--format='%(committerdate) %09 %(authorname) %09 %(refname)'",
         "refs/remotes"
     )
-    $refs = git for-each-ref @git_args
-    $dont_match = "[S-Z]-[0-9][0-9][0-9][0-9]\.[0-9][0-9]"
-    $non_matching_refs = $refs | Select-String -NotMatch "$dont_match"
-    $origin_refs = $non_matching_refs | Select-String "refs/remotes/origin/"
-    $my_refs = $origin_refs | Select-String "$Name"
-    $exclude_head = $my_refs | Select-String -NotMatch "refs/remotes/origin/HEAD"
+    [string[]] $refs = git for-each-ref @git_args
+    [string] $dont_match = "[S-Z]-[0-9][0-9][0-9][0-9]\.[0-9][0-9]"
+    [string[]] $non_matching_refs = $refs | Select-String -NotMatch "$dont_match"
+    [string[]] $origin_refs = $non_matching_refs | Select-String "refs/remotes/origin/"
+    [string[]] $my_refs = $origin_refs | Select-String "$Name"
+    [string[]] $exclude_head = $my_refs | Select-String -NotMatch "refs/remotes/origin/HEAD"
+
     return $exclude_head
 }
 
-# +-------+
-# | Invokes |
-# +-------+--------------------------------------------------------------------
 function Invoke-GitStatus {
     git status
 }
@@ -75,8 +82,8 @@ function Invoke-GitCloneWorktree {
     param (
         [Parameter(Mandatory)][string] $Url
     )
-    $split_url = $Url -split "/"
-    $repo_name = $split_url[-1] -replace ".git", ""
+    [string[]] $split_url = $Url -split "/"
+    [string] $repo_name = $split_url[-1] -replace ".git", ""
 
     New-Item -Name "$repo_name" -Type Directory
     Push-Location "$repo_name"
@@ -97,7 +104,7 @@ function Invoke-GitFixup {
     if (!$Global:GitState.LastHash) {
         Invoke-FuzzyGitFixup -DryRun
     }
-    $hash = $Global:GitState.LastHash
+    [string] $hash = $Global:GitState.LastHash
 
     if ($Type) {
         git commit --fixup="${Type}:${hash}"
@@ -123,6 +130,7 @@ function Invoke-FuzzyGitFixup {
         [string] $Type
     )
     $Global:GitState.LastHash = Get-FuzzyGitHash
+    $Global:GitState.LastHash | Out-File -FilePath "${env:GitPs1Cache}/hash"
 
     if ($DryRun) {
         return
@@ -135,11 +143,19 @@ function Invoke-FuzzyGitFixup {
     }
 }
 
+function Invoke-FuzzyGitFixupReword {
+    Invoke-FuzzyGitFixup -Type reword
+}
+
+function Invoke-FuzzyGitFixupAend {
+    Invoke-FuzzyGitFixup -Type amend
+}
+
 function Invoke-FuzzyGitRebaseInteractive {
     param (
         [switch] $Squash
     )
-    $hash = Get-FuzzyGitHash
+    [string] $hash = Get-FuzzyGitHash
 
     if ($Squash) {
         git rebase --interactive --autosquash $hash
@@ -149,7 +165,7 @@ function Invoke-FuzzyGitRebaseInteractive {
 }
 
 function Invoke-FuzzyGitAdd {
-    $files = Get-FuzzyGitStatusFiles
+    [string[]] $files = Get-FuzzyGitStatusFiles
 
     foreach($file in $files) {
         git add $file
