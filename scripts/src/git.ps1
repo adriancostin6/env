@@ -20,7 +20,7 @@ function Get-FuzzyGitStatusFiles {
     [OutputType([System.Collections.ArrayList])]
 
     [string] $repoRoot = git rev-parse --show-toplevel
-    [string] $gitStatus = git status --porcelain | fzf --multi
+    [string[]] $gitStatus = git status --porcelain | fzf --multi
 
     $files = [System.Collections.ArrayList]@()
     foreach($line in $gitStatus) {

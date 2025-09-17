@@ -49,11 +49,7 @@ if ($isSetupDone) { # we already did the setup
 }
 
 [string] $batCfg = bat --config-dir
-
-if (-not (Test-Path -Path $batCfg)) {
-    Write-Warning "bat: theme folder not found, creating."
-    New-Item -Force -Path $themes -ItemType Directory | Out-Null
-}
+New-Item -Force -Path "${batCfg}/themes" -ItemType Directory | Out-Null
 
 if (-not (Test-Path -Path $batCfg\themes\*)) {
     Write-Warning "bat: theme folder is empty, trying to download some themes."
@@ -79,4 +75,4 @@ if (-not (Test-Path -Path $batCfg\themes\*)) {
     }
 }
 
-Update-BatTheme -BuildCache
+Update-BatTheme -BuildBatCache
