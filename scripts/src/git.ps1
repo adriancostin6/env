@@ -1,3 +1,6 @@
+# +-------+
+# | State |
+# +-------+--------------------------------------------------------------------
 $Global:GitState = @{
     LastHash = $null
 }
@@ -10,6 +13,9 @@ if (Test-Path -Path $hashFile) {
     $Global:GitState.LastHash = Get-Content -Path $hashFile
 }
 
+# +---------+
+# | Helpers |
+# +---------+------------------------------------------------------------------
 function Get-FuzzyGitStatusFiles {
     [OutputType([System.Collections.ArrayList])]
 
@@ -56,6 +62,13 @@ function Get-OwnedGitBranches {
     [string[]] $exclude_head = $my_refs | Select-String -NotMatch "refs/remotes/origin/HEAD"
 
     return $exclude_head
+}
+
+# +---------+
+# | Invokes |
+# +---------+------------------------------------------------------------------
+function Invoke-GitAddInteractive {
+    git add --interactive
 }
 
 function Invoke-GitStatus {
@@ -121,15 +134,17 @@ function Invoke-GitFixupAmend {
     Invoke-GitFixup -Type amend
 }
 
-# +-------------+
-# | Fuzzy calls |
-# +-------------+--------------------------------------------------------------
 function Invoke-FuzzyGitFixup {
     param (
         [switch] $DryRun,
         [string] $Type
     )
-    $Global:GitState.LastHash = Get-FuzzyGitHash
+
+    [string] $hash = Get-FuzzyGitHash
+    if (-not $hash) {
+        return
+    }
+    $Global:GitState.LastHash = $hash
     $Global:GitState.LastHash | Out-File -FilePath "${env:GitPs1Cache}/hash"
 
     if ($DryRun) {
@@ -147,7 +162,7 @@ function Invoke-FuzzyGitFixupReword {
     Invoke-FuzzyGitFixup -Type reword
 }
 
-function Invoke-FuzzyGitFixupAend {
+function Invoke-FuzzyGitFixupAmend {
     Invoke-FuzzyGitFixup -Type amend
 }
 
@@ -155,7 +170,11 @@ function Invoke-FuzzyGitRebaseInteractive {
     param (
         [switch] $Squash
     )
+
     [string] $hash = Get-FuzzyGitHash
+    if (-not $hash) {
+        return
+    }
 
     if ($Squash) {
         git rebase --interactive --autosquash $hash
@@ -164,14 +183,85 @@ function Invoke-FuzzyGitRebaseInteractive {
     }
 }
 
+function Invoke-FuzzyGitRebaseInteractiveSquash {
+    Invoke-FuzzyGitRebaseInteractive -Squash
+}
+
 function Invoke-FuzzyGitAdd {
+    param (
+        [switch] $Patch
+    )
+
     [string[]] $files = Get-FuzzyGitStatusFiles
+    if (-not $files) {
+        return
+    }
 
     foreach($file in $files) {
-        git add $file
+        if ($Patch) {
+            git add --patch $file
+        } else {
+            git add $file
+        }
     }
+}
+function Invoke-FuzzyGitAddPatch {
+    Invoke-FuzzyGitAdd -Patch
+}
+
+function Invoke-FuzzyGitRestore {
+    param(
+        [switch] $Staged
+    )
+
+    [string[]] $files = Get-FuzzyGitStatusFiles
+    if (-not $files) {
+        return
+    }
+
+
+    foreach($file in $files) {
+        if ($Staged) {
+            git restore --staged $file
+        } else {
+            git restore $file
+        }
+    }
+}
+
+function Invoke-FuzzyGitRestoreStaged {
+    Invoke-FuzzyGitRestore -Staged
 }
 
 function Invoke-FuzzyGitBlame {
     fzf --bind "enter:become(git blame {})"
+}
+
+# +---------+
+# | Wrapper |
+# +---------+------------------------------------------------------------------
+function Invoke-GitWrapper {
+    $cmds = @{
+        'status'                        = 'Invoke-GitStatus';
+        'status (no untracked files)'   = 'Invoke-GitStatusModified';
+        'log'                           = 'Invoke-GitLog';
+        'log (patch)'                   = 'Invoke-GitLogFull';
+        'log (oneline)'                 = 'Invoke-GitLogOneline';
+        'rebase'                        = 'Invoke-FuzzyGitRebaseInteractive';
+        'rebase (autosquash)'           = 'Invoke-FuzzyGitRebaseInteractiveSquash';
+        'add'                           = 'Invoke-FuzzyGitAdd';
+        'add (patch)'                   = 'Invoke-FuzzyGitAddPatch';
+        'add (interactive)'             = 'Invoke-GitAddInteractive';
+        'restore'                       = 'Invoke-FuzzyGitRestore';
+        'restore (staged)'              = 'Invoke-FuzzyGitRestoreStaged';
+        'blame'                         = 'Invoke-FuzzyGitBlame';
+        'fixup'                         = 'Invoke-FuzzyGitFixup';
+        'reword'                        = 'Invoke-FuzzyGitFixupReword';
+        'amend'                         = 'Invoke-FuzzyGitFixupAmend'
+    }
+
+    $cmd = $cmds.Keys | fzf
+    if ($cmd) {
+        Invoke-Expression -Command $cmds[$cmd]
+    }
 }
