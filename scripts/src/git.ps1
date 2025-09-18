@@ -300,3 +300,28 @@ function Invoke-GitWrapper {
         Invoke-Expression -Command $cmds[$cmd]
     }
 }
+
+# +-------+
+# | Setup |
+# +-------+------------------------------------------------------------------
+
+if (-not (Test-Path -Path "${HOME}/.gitconfig-local")) {
+    $localGitConfigLines = @(
+        '#[includeIf "gitdir:/path/we/include/for/"]',
+        "#`tpath = ~/.gitconfig-includeIf",
+        '#[includeIf "gitdir:C:/Windows/path/we/include/for/"]',
+        "#`tpath = ~/.gitconfig-includeIf"
+    )
+    $localGitConfig = $localGitConfigLines -join "`n"
+    $localGitConfig | Out-File -NoNewline -FilePath "${HOME}/.gitconfig-local"
+
+    if (-not (Test-Path -Path "${HOME}/.gitconfig-includeIf")) {
+        $includeIfGitConfigLines = @(
+            '#[user]',
+            "#`temail = adrianc@work.com"
+        )
+        $includIfGitConfig = $includeIfGitConfigLines -join "`n"
+        $includIfGitConfig | Out-File -NoNewline -FilePath "${HOME}/.gitconfig-includeIf"
+    }
+}
+
