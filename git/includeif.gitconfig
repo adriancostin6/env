@@ -1,2 +1,0 @@
-[includeIf "gitdir:/path/to/repos/work/"]
-	path = work.gitconfig
