@@ -5,8 +5,7 @@ vim.filetype.add({
   },
   pattern = {
     ['SCons.*'] = 'python',
-    ['.*.c.jinja'] = 'c',
-    ['.*.cpp.jinja'] = 'cpp',
-    ['.*.h.jinja'] = 'cpp',
+    ['.*.c..*'] = 'c',
+    ['.*.h..*'] = 'cpp',
   },
 })
