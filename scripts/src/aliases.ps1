@@ -1,5 +1,6 @@
 Set-Alias -Name ll      -Value Invoke-EzaFull
 Set-Alias -Name ls      -Value Invoke-Eza
+Set-Alias -Name y       -Value Invoke-YaziRememberCwd
 
 Set-Alias -Name v       -Value Invoke-Neovim
 Set-Alias -Name vi      -Value Invoke-NeovimNoConfig
