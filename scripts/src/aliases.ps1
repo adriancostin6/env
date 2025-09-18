@@ -17,3 +17,4 @@ Set-Alias -Name gblame  -Value Invoke-FuzzyGitBlame
 Set-Alias -Name gfix    -Value Invoke-GitFixup
 Set-Alias -Name gfixr   -Value Invoke-GitFixupReword
 Set-Alias -Name gfixa   -Value Invoke-GitFixupAmend
+Set-Alias -Name gwt     -Value Invoke-GitSwitchWorktree

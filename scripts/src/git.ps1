@@ -64,6 +64,14 @@ function Get-OwnedGitBranches {
     return $exclude_head
 }
 
+function Get-FuzzyGitWorktree {
+    [OutputType([string])]
+
+    $out = git worktree list --porcelain | rg worktree | fzf
+    $split = $out -split ' ' # don't care about multiple spaces for now
+    return $split[1]
+}
+
 # +---------+
 # | Invokes |
 # +---------+------------------------------------------------------------------
@@ -90,6 +98,7 @@ function Invoke-GitLogOneline {
 function Invoke-GitLogFull {
     git log -p
 }
+
 
 function Invoke-GitCloneWorktree {
     param (
@@ -156,6 +165,27 @@ function Invoke-FuzzyGitFixup {
     } else {
         git commit --fixup "$Global:GitState.LastHash"
     }
+}
+
+function Invoke-GitSwitchWorktree {
+    $worktree = Get-FuzzyGitWorktree
+    if (-not $worktree) {
+        return
+    }
+    Set-Location -Path $worktree
+}
+
+function Invoke-GitRemoveWorktree {
+    $worktree = Get-FuzzyGitWorktree
+    git worktree remove --force $worktree
+}
+
+function Invoke-GitCreateWorktree {
+    param (
+        [Parameter(Mandatory)][string] $Name,
+        [Parameter(Mandatory)][string] $Branch
+    )
+    git worktree add $Name $Branch
 }
 
 function Invoke-FuzzyGitFixupReword {
@@ -237,6 +267,7 @@ function Invoke-FuzzyGitBlame {
     fzf --bind "enter:become(git blame {})"
 }
 
+
 # +---------+
 # | Wrapper |
 # +---------+------------------------------------------------------------------
@@ -257,7 +288,11 @@ function Invoke-GitWrapper {
         'blame'                         = 'Invoke-FuzzyGitBlame';
         'fixup'                         = 'Invoke-FuzzyGitFixup';
         'reword'                        = 'Invoke-FuzzyGitFixupReword';
-        'amend'                         = 'Invoke-FuzzyGitFixupAmend'
+        'amend'                         = 'Invoke-FuzzyGitFixupAmend';
+        'clone worktree'                = 'Invoke-GitCloneWorktree';
+        'switch worktree'               = 'Invoke-GitSwitchWorktree';
+        'create worktree'               = 'Invoke-GitCreateWorktree';
+        'remove worktree'               = 'Invoke-GitRemoveWorktree'
     }
 
     $cmd = $cmds.Keys | fzf
