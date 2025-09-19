@@ -72,6 +72,13 @@ function Get-FuzzyGitWorktree {
     return $split[1]
 }
 
+function Get-GitBranchName {
+    [OutputType([string])]
+
+    $name = git rev-parse --abbrev-ref HEAD
+    return $name
+}
+
 # +---------+
 # | Invokes |
 # +---------+------------------------------------------------------------------
@@ -267,6 +274,37 @@ function Invoke-FuzzyGitBlame {
     fzf --bind "enter:become(git blame {})"
 }
 
+function Invoke-GitPush {
+    param (
+        [Parameter(Mandatory=$false)][string] $Remote,
+        [Parameter(Mandatory=$false)][string] $Branch
+    )
+
+    $what = $Branch
+    if (-not $what) {
+        $branch = Get-GitBranchName
+        if (-not $branch) {
+            Write-Error "git: cannot push, branch name not found."
+            return
+        }
+
+        $risky = @('master', 'main')
+        if ($branch -in $risky) {
+            $confirm = Read-Host "Are you sure you want to push to $branch? (y/N)"
+            if (-not $confirm -eq 'y') {
+                return
+            }
+        }
+
+        $what = $branch
+    }
+
+    if (-not $Remote) {
+        git push origin $args $what
+        return
+    }
+    git push $Remote $args $what
+}
 
 # +---------+
 # | Wrapper |
