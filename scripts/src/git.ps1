@@ -275,6 +275,8 @@ function Invoke-FuzzyGitBlame {
 }
 
 function Invoke-GitPush {
+    # problem here is that we have to specify these two first, or else we push
+    # to random bogus. fix it by saying these will be last. how I do not know
     param (
         [Parameter(Mandatory=$false)][string] $Remote,
         [Parameter(Mandatory=$false)][string] $Branch
@@ -290,7 +292,7 @@ function Invoke-GitPush {
 
         $risky = @('master', 'main')
         if ($branch -in $risky) {
-            $confirm = Read-Host "Are you sure you want to push to $branch? (y/N)"
+            $confirm = Read-Host "Are you sure you want to push to ${branch}? (y/N)"
             if (-not $confirm -eq 'y') {
                 return
             }
@@ -299,11 +301,20 @@ function Invoke-GitPush {
         $what = $branch
     }
 
+
     if (-not $Remote) {
-        git push origin $args $what
+        git push $args origin $what
         return
     }
-    git push $Remote $args $what
+    git push $args $Remote $what
+}
+
+function Invoke-GitPushSimple {
+    param (
+        [Parameter(Mandatory)][string] $Remote,
+        [Parameter(Mandatory)][string] $Branch
+    )
+    Invoke-GitPush $Remote $Branch
 }
 
 # +---------+
@@ -327,6 +338,7 @@ function Invoke-GitWrapper {
         'fixup'                         = 'Invoke-FuzzyGitFixup';
         'reword'                        = 'Invoke-FuzzyGitFixupReword';
         'amend'                         = 'Invoke-FuzzyGitFixupAmend';
+        'push'                          = 'Invoke-GitPushSimple';
         'clone worktree'                = 'Invoke-GitCloneWorktree';
         'switch worktree'               = 'Invoke-GitSwitchWorktree';
         'create worktree'               = 'Invoke-GitCreateWorktree';
