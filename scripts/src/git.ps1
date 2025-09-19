@@ -88,15 +88,15 @@ function Invoke-GitStatusModified {
 }
 
 function Invoke-GitLog {
-    git log
+    git log $args
 }
 
 function Invoke-GitLogOneline {
-    git log --oneline
+    git log --oneline $args
 }
 
 function Invoke-GitLogFull {
-    git log -p
+    git log -p $args
 }
 
 
