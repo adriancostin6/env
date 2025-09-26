@@ -8,5 +8,5 @@
 	conflictstyle = diff3
 [core]
 	autocrlf = false
-[rebsae]
+[rebase]
 	autosquash = false
