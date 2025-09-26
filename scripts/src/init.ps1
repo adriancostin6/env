@@ -7,6 +7,8 @@
 
 . ./cmds.ps1
 
+. ./readline.ps1
+
 # Tools
 . ./bat.ps1
 . ./eza.ps1
