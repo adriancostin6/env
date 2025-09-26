@@ -1,9 +1,11 @@
-. "${HOME}/config.ps1" #  machine specific config
+. ./local.ps1 # machine specific config
 
 # +--------+
 # | Config |
 # +--------+-------------------------------------------------------------------
 . ./cache.ps1 # First
+
+. ./cmds.ps1
 
 # Tools
 . ./bat.ps1

@@ -130,7 +130,8 @@ function Invoke-GitFixup {
     param (
         [string] $Type
     )
-    if (!$Global:GitState.LastHash) {
+
+    if (-not $Global:GitState.LastHash) {
         Invoke-FuzzyGitFixup -DryRun
     }
     [string] $hash = $Global:GitState.LastHash
@@ -168,9 +169,9 @@ function Invoke-FuzzyGitFixup {
     }
 
     if ($Type) {
-        git commit --fixup="${Type}:${Global:GitState.LastHash}"
+        git commit --fixup="${Type}:$($Global:GitState.LastHash)"
     } else {
-        git commit --fixup "$Global:GitState.LastHash"
+        git commit --fixup $Global:GitState.LastHash
     }
 }
 
@@ -302,6 +303,9 @@ function Invoke-GitPush {
     }
 
 
+    # gpush --force ssh works for pushing to master
+    # gpush ssh master --force does not
+    #Invoke-GitPush: A positional parameter cannot be found that accepts argument '--force'.
     if (-not $Remote) {
         git push $args origin $what
         return
@@ -322,27 +326,27 @@ function Invoke-GitPushSimple {
 # +---------+------------------------------------------------------------------
 function Invoke-GitWrapper {
     $cmds = @{
-        'status'                        = 'Invoke-GitStatus';
-        'status (no untracked files)'   = 'Invoke-GitStatusModified';
-        'log'                           = 'Invoke-GitLog';
-        'log (patch)'                   = 'Invoke-GitLogFull';
-        'log (oneline)'                 = 'Invoke-GitLogOneline';
-        'rebase'                        = 'Invoke-FuzzyGitRebaseInteractive';
-        'rebase (autosquash)'           = 'Invoke-FuzzyGitRebaseInteractiveSquash';
-        'add'                           = 'Invoke-FuzzyGitAdd';
-        'add (patch)'                   = 'Invoke-FuzzyGitAddPatch';
-        'add (interactive)'             = 'Invoke-GitAddInteractive';
-        'restore'                       = 'Invoke-FuzzyGitRestore';
-        'restore (staged)'              = 'Invoke-FuzzyGitRestoreStaged';
-        'blame'                         = 'Invoke-FuzzyGitBlame';
-        'fixup'                         = 'Invoke-FuzzyGitFixup';
-        'reword'                        = 'Invoke-FuzzyGitFixupReword';
-        'amend'                         = 'Invoke-FuzzyGitFixupAmend';
-        'push'                          = 'Invoke-GitPushSimple';
-        'clone worktree'                = 'Invoke-GitCloneWorktree';
-        'switch worktree'               = 'Invoke-GitSwitchWorktree';
-        'create worktree'               = 'Invoke-GitCreateWorktree';
-        'remove worktree'               = 'Invoke-GitRemoveWorktree'
+        'status'                            = 'Invoke-GitStatus';
+        'status (modified)'                 = 'Invoke-GitStatusModified';
+        'log'                               = 'Invoke-GitLog';
+        'log (patch)'                       = 'Invoke-GitLogFull';
+        'log (oneline)'                     = 'Invoke-GitLogOneline';
+        'rebase (interactive)'              = 'Invoke-FuzzyGitRebaseInteractive';
+        'rebase (interactive, autosquash)'  = 'Invoke-FuzzyGitRebaseInteractiveSquash';
+        'add'                               = 'Invoke-FuzzyGitAdd';
+        'add (patch)'                       = 'Invoke-FuzzyGitAddPatch';
+        'add (interactive)'                 = 'Invoke-GitAddInteractive';
+        'restore'                           = 'Invoke-FuzzyGitRestore';
+        'restore (staged)'                  = 'Invoke-FuzzyGitRestoreStaged';
+        'blame'                             = 'Invoke-FuzzyGitBlame';
+        'fixup'                             = 'Invoke-FuzzyGitFixup';
+        'fixup (reword)'                    = 'Invoke-FuzzyGitFixupReword';
+        'fixup (amend)'                     = 'Invoke-FuzzyGitFixupAmend';
+        'push'                              = 'Invoke-GitPushSimple';
+        'worktree (clone)'                  = 'Invoke-GitCloneWorktree';
+        'worktree (switch)'                 = 'Invoke-GitSwitchWorktree';
+        'worktree (create)'                 = 'Invoke-GitCreateWorktree';
+        'worktree (remove)'                 = 'Invoke-GitRemoveWorktree'
     }
 
     $cmd = $cmds.Keys | fzf
