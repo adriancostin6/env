@@ -40,15 +40,8 @@ function Remove-OldestGdPath {
 
 function Remove-CwdGdPath {
     $current = (Get-Location).Path
-    if (-not ($GdPaths -contains $current)) {
-        return
-    }
-    foreach ($path in $GdPaths) {
-        if ($path -eq $current) {
-            $GdPaths.Remove($current)
-            $GdPaths | Out-File -Path $gdPathsFile
-        }
-    }
+    $GdPaths.Remove($current)
+    $GdPaths | Out-File -Path $gdPathsFile
 }
 
 function Clear-GdPaths {
