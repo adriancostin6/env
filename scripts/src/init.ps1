@@ -6,6 +6,7 @@
 . ./cache.ps1 # First
 
 . ./cmds.ps1
+. ./gd.ps1
 
 . ./readline.ps1
 
