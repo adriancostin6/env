@@ -79,6 +79,20 @@ function Get-GitBranchName {
     return $name
 }
 
+function Test-GitIsInsideWorktree {
+    if (-not (git rev-parse --is-inside-work-tree)) {
+        return $false
+    }
+    return $true
+}
+function Get-GitCurrentWorktree {
+    if (-not (Test-GitIsInsideWorktree)) {
+        return $null
+    }
+    $current = git rev-parse --show-toplevel
+    return  $current
+}
+
 # +---------+
 # | Invokes |
 # +---------+------------------------------------------------------------------
@@ -319,6 +333,14 @@ function Invoke-GitPushSimple {
         [Parameter(Mandatory)][string] $Branch
     )
     Invoke-GitPush $Remote $Branch
+}
+
+function Invoke-GitCleanInFolder {
+    param (
+        [Parameter (Mandatory)] $FolderPath
+    )
+
+    Set-Location -Path $FolderPath && git clean -fdx && Set-Location -Path -
 }
 
 # +---------+
