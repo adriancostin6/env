@@ -5,9 +5,13 @@ vim.filetype.add({
   },
   -- to escape special characters in these patterns use '%'
   pattern = {
-    ['SCons.*']   = 'python',
-    ['.*%.arxml'] = 'xml',
-    ['.*%.c%..*'] = 'c',
-    ['.*%.h%..*'] = 'cpp',
+    ['SCons.*']     = 'python',
+    ['.*%.arxml']   = 'xml',
+
+    -- handle weird language-like files (code generation)
+    ['.*%.c%..*']   = 'c',
+    ['.*%.h%..*']   = 'cpp',
+    ['.*%.cpp%..*'] = 'cpp',
+    ['.*%.py%..*'] = 'python',
   },
 })
