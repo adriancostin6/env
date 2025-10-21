@@ -18,6 +18,8 @@ function Invoke-YaziRememberCwd {
 # see https://yazi-rs.github.io/docs/installation#windows
 $env:YAZI_FILE_ONE=$Global:YaziWindowsFileExecutable
 
-ya pkg add Mintass/rose-pine-dawn
-ya pkg add Mintass/rose-pine
-ya pkg add Mintass/rose-pine-moon
+if (-not (Test-Path -Path "${env:APPDATA}\yazi\config\package.toml")) {
+    ya pkg add Mintass/rose-pine-dawn
+    ya pkg add Mintass/rose-pine
+    ya pkg add Mintass/rose-pine-moon
+}
