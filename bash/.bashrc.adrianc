@@ -7,6 +7,9 @@ popd() {
     command popd "$@" > /dev/null
 }
 
+# readline vi mode
+set -o vi
+
 # Editor
 export VISUAL="nvim --clean"
 export EDITOR="$VISUAL"
