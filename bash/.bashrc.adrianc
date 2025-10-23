@@ -7,8 +7,13 @@ popd() {
     command popd "$@" > /dev/null
 }
 
-# readline vi mode
-set -o vi
+# readline vi mode + old readline habits
+set -o vi 
+bind -m vi-insert '"\C-l":clear-screen'
+bind -m vi-insert '"\C-a":beginning-of-line'
+bind -m vi-insert '"\C-e":end-of-line'
+bind -m vi-insert '"\C-w":backward-kill-word'
+bind -m vi-insert '"\C-k":kill-line'
 
 # Editor
 export VISUAL="nvim --clean"
