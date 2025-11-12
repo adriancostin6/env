@@ -1,13 +1,13 @@
-source ./aliases.sh
-source ./brightness.sh
-source ./exec.sh
-source ./git.sh
-source ./gpg.sh
-source ./log.sh
-source ./path.sh
-source ./stow.sh
-source ./theme.sh
-source ./yazi.sh
+source ./bash/aliases.sh
+source ./bash/brightness.sh
+source ./bash/exec.sh
+source ./bash/git.sh
+source ./bash/gpg.sh
+source ./bash/log.sh
+source ./bash/path.sh
+source ./bash/stow.sh
+source ./bash/theme.sh
+source ./bash/yazi.sh
 
 # let's leave this last ^(.)^
-source ./completions.sh
+source ./bash/completions.sh

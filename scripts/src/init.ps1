@@ -3,20 +3,20 @@
 # +--------+
 # | Config |
 # +--------+-------------------------------------------------------------------
-. ./cache.ps1 # First
+. ./pwsh/cache.ps1 # First
 
-. ./cmds.ps1
-. ./gd.ps1
+. ./pwsh//cmds.ps1
+. ./pwsh//gd.ps1
 
-. ./readline.ps1
+. ./pwsh/readline.ps1
 
 # Tools
-. ./bat.ps1
-. ./eza.ps1
-. ./git.ps1
-. ./nvim.ps1
-. ./yazi.ps1
+. ./pwsh/bat.ps1
+. ./pwsh/eza.ps1
+. ./pwsh/git.ps1
+. ./pwsh/nvim.ps1
+. ./pwsh/yazi.ps1
 
-. ./aliases.ps1 # Last
+. ./pwsh/aliases.ps1 # Last
 # -----------------------------------------------------------------------------
 
