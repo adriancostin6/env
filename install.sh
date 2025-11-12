@@ -53,7 +53,7 @@ declare -rA stows=(
   ["oh-my-posh"]="$HOME/.config/oh-my-posh"
   ["wezterm"]="$HOME/.config/wezterm"
 )
-source "scripts/personal/shell/source/config/tools/stow.sh"
+source "scripts/src/bash/stow.sh"
 printf "Stowing configurations...\n"
 for pkg in "${!stows[@]}"
 do
