@@ -1,77 +1,33 @@
 #!/usr/bin/env bash
 
-install_home="$PWD"
-if [ "$install_home" != "$HOME" ]; then
-    printf "Cannot install outside of $HOME directory currently.\n"
-    exit 1
+# Create if it does not exist, we will symlink binaries into here.
+mkdir -p "$HOME/.local/bin"
+
+ENV_REPO_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )"
+export ENV_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.local/share}/env"
+if [ -f "$ENV_CACHE_DIR/setup.lock" ]; then
+  printf "env: already setup, Exiting.\n"
+  exit 1
 fi
+mkdir -p "$ENV_CACHE_DIR"
 
-needs=(
-    stow
-)
-failed=0
-for pkg in "${needs[@]}"
-do
-  command -v $pkg &>/dev/null || { printf "Missing required dependency: %s\n" $pkg; let failed++;continue; }
-done
-if [ $failed -gt 0 ]; then
-    exit 1
-fi
+ENV_PREFIX="$HOME"
+PATH="$ENV_REPO_DIR/external/linux:$PATH"
 
-wants=(
-    bat
-    delta
-    dmenu
-    dwm
-    eza
-    fd
-    fzf
-    nvim
-    oh-my-posh
-    rg
-    st
-    yazi
-    zoxide
-)
-for pkg in "${wants[@]}"
-do
-  command -v $pkg &>/dev/null || { printf "Missing wanted package: %s\nConsider installing for better experience.\n" $pkg; continue; }
-done
 
-printf "Cloning env repo.\n"
-git clone https://www.github.com/adriancostin6/env.git
+mkdir -p "$ENV_PREFIX/apps"
+mkdir -p "$ENV_PREFIX/repos"
 
-set -e
+append_to_bashrc() {
+  if ! grep -q "$1" "$HOME/.bashrc"; then
+    printf "$1\n" >> "$HOME/.bashrc"
+  fi
+}
+append_to_bashrc "ENV_PREFIX=\"$ENV_PREFIX\""
+append_to_bashrc "ENV_REPO_DIR=\"$ENV_REPO_DIR\""
+append_to_bashrc ". \"$HOME/.bashrc.$(whoami)\""
 
-cd env
+ln -s "$ENV_REPO_DIR/configurations/bash/.bashrc" "$HOME/.bashrc.$(whoami)"
 
-declare -rA stows=(
-  ["bat"]="$HOME/.config/bat"
-  ["git"]="$HOME/.config/git"
-  ["zellij"]="$HOME/.config/zellij"
-  ["nvim"]="$HOME/.config/nvim"
-  ["oh-my-posh"]="$HOME/.config/oh-my-posh"
-  ["wezterm"]="$HOME/.config/wezterm"
-)
-source "scripts/src/bash/stow.sh"
-printf "Stowing configurations...\n"
-for pkg in "${!stows[@]}"
-do
-    target="${stows[$pkg]}"
-    if [ -n "$target" ] ; then
-        if [ ! -d "$target" ]; then
-            printf "$target does not exist, creating.\n"
-            mkdir -p $target
-        fi
-        printf "Stowing %s to %s.\n" "$pkg" "$target"
-        stow_pkg "$pkg" "$target"
-    fi
-done
-
-printf "Adding user shell configuation files to $HOME/.bashrc.$(whoami).\n"
-printf "Remember to source this in your $HOME/.bashrc.\n"
-printf "echo \"source ./bashrc.$(whoami)\" >> "$HOME/.bashrc"\n"
-
-echo "pushd \"$HOME/env/bash\" > /dev/null" >> "$HOME/.bashrc.$(whoami)"
-echo "source ./.bashrc.$(whoami)" >> "$HOME/.bashrc.$(whoami)"
-echo "popd" >> "$HOME/.bashrc.$(whoami)"
+# Setup is done
+touch "$ENV_CACHE_DIR/setup.lock"
