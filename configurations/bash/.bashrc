@@ -1,5 +1,5 @@
-echo "Hello"
-return # not ready yet
+ENV_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.local/share}/env"
+source "$ENV_CACHE_DIR/repodir"
 
 pushd () {
     command pushd "$@" > /dev/null
@@ -31,9 +31,12 @@ export ENV_REPO_HOME="$HOME/repos"
 [[ ":$PATH:" == "*:$HOME/.local/bin:*" ]] || PATH="$HOME/.local/bin:$PATH"
 
 # Configuration
-pushd "$ENV_REPO_DIR/env/scripts"
+pushd "$ENV_REPO_DIR/scripts"
 source ./init.sh
 popd
 
-zoxide init bash
-oh-my-posh init bash --config "$XDG_CONFIG_HOME/oh-my-posh/.adrianc.omp.json"
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+
+exec_if zoxide init bash
+exec_if oh-my-posh init bash --config "$XDG_CONFIG_HOME/oh-my-posh/.adrianc.omp.json"

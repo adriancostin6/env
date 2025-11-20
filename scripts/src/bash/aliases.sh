@@ -1,25 +1,12 @@
 # general
-cd() {
-  command -v z &>/dev/null || builtin cd "$@" || return 
-  z "$@"
-}
-
-psme() {
-  local grepper=rg
-  command -v $grepper &>/dev/null || grepper=grep
-  ps -aux | $grepper $(whoami)
-}
-
 alias ll="eza --group-directories-first -alh"
 alias iv='feh --fullscreen'
 alias fbat="fzf --bind 'enter:execute(bat {})'"
-
 
 # nvim
 alias v='nvim'
 alias vim='nvim'
 alias vi='nvim --clean'
-alias fv="fzf --bind 'enter:become(nvim {})'"
 
 # git
 alias gs='git status'
