@@ -1,35 +1,50 @@
+_log() {
+  local caller="$1"
+  local severity="$2"
+  local msg="$3"
+
+  if [ -z "$caller" ]; then
+    caller=$(basename "${BASH_SOURCE[-1]:-$0}")
+  fi
+
+  local padding=""
+  case $severity in 
+    INFO | WARN)
+      padding=" "
+      ;;
+  esac
+
+  printf "[$severity] $padding $(date) $caller: $msg\n"
+}
+
 log() {
-    local caller=$(basename "${BASH_SOURCE[-1]:-$0}")
+  local msg="$1"
+  local caller="$2"
 
-    local msg="$1"
-    local severity="INFO"
-    if [ "$#" -eq 2 ]; then
-        case "$1" in 
-            INFO|WARN|ERROR)
-                severity="$1"
-                ;;
-            *) ;;
-        esac
-        msg="$2"
-    fi
-
-    printf "[$caller] $severity $msg\n"
+  _log "$caller" "INFO" "$msg"
 }
-
-inf() {
-    [ "$#" -lt 1 ] && { return; } # do nothing when no args are passed
-    log "$1"
-}
-
 wrn() {
-    [ "$#" -lt 1 ] && { return; } # do nothing when no args are passed
-    log WARN "$1"
+  local msg="$1"
+  local caller="$2"
+
+  _log "$caller" "WARN" "$msg"
 }
+err() {
+  local msg="$1"
+  local caller="$2"
 
+  _log "$caller" "ERROR" "$msg"
+}
 die() {
-    if [ "$#" -eq 1 ];then
-        log ERROR "$1"
-    fi
+  local msg="$1"
+  local caller="$2"
 
-    exit 1
+  _log "$caller" "FATAL" "$msg"
+  exit 1
+}
+dbg() {
+  local msg="$1"
+  local caller="$2"
+
+  [ -n "$LOG_DEBUG" ] && _log "$caller" "DEBUG" "$msg"
 }
