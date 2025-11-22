@@ -8,8 +8,6 @@ ENV_STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/env"
 mkdir -p "$ENV_STATE_DIR"
 log "starting environment installer." | tee -a "$ENV_STATE_DIR/env.log"
 
-dbg "storing $ENV_REPO_DIR in $ENV_CACHE_DIR/repodir" | tee -a "$ENV_STATE_DIR/env.log"
-printf "ENV_REPO_DIR=$ENV_REPO_DIR" > "$ENV_CACHE_DIR/repodir"
 
 ENV_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.local/share}/env"
 if [ -f "$ENV_CACHE_DIR/install.lock" ]; then
@@ -17,6 +15,9 @@ if [ -f "$ENV_CACHE_DIR/install.lock" ]; then
 fi
 dbg "creating $ENV_CACHE_DIR" | tee -a "$ENV_STATE_DIR/env.log"
 mkdir -p "$ENV_CACHE_DIR"
+
+dbg "storing $ENV_REPO_DIR in $ENV_CACHE_DIR/repodir" | tee -a "$ENV_STATE_DIR/env.log"
+printf "ENV_REPO_DIR=$ENV_REPO_DIR" > "$ENV_CACHE_DIR/repodir"
 
 # Install tools
 env_install() {
