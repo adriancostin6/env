@@ -1,5 +1,6 @@
+LOG_COMPONENT=""
 _log() {
-  local caller="$1"
+  local caller="$LOG_COMPONENT"
   local severity="$2"
   local msg="$3"
 
@@ -17,34 +18,37 @@ _log() {
   printf "[$severity] $padding $(date) $caller: $msg\n"
 }
 
+
 log() {
   local msg="$1"
-  local caller="$2"
 
-  _log "$caller" "INFO" "$msg"
+  _log "$LOG_COMPONENT" "INFO" "$msg"
 }
 wrn() {
   local msg="$1"
-  local caller="$2"
 
-  _log "$caller" "WARN" "$msg"
+  _log "$LOG_COMPONENT" "WARN" "$msg"
 }
 err() {
   local msg="$1"
-  local caller="$2"
 
-  _log "$caller" "ERROR" "$msg"
+  _log "$LOG_COMPONENT" "ERROR" "$msg"
 }
 die() {
   local msg="$1"
-  local caller="$2"
 
-  _log "$caller" "FATAL" "$msg"
+  _log "$LOG_COMPONENT" "FATAL" "$msg"
   exit 1
 }
 dbg() {
   local msg="$1"
-  local caller="$2"
 
-  [ -n "$LOG_DEBUG" ] && _log "$caller" "DEBUG" "$msg"
+  [ -n "$LOG_DEBUG" ] && _log "$LOG_COMPONENT" "DEBUG" "$msg"
+}
+
+logger_set_log_component() {
+  LOG_COMPONENT="$1"
+}
+logger_reset_log_component() {
+  LOG_COMPONENT=""
 }
