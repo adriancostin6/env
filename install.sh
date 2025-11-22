@@ -1,49 +1,39 @@
 #!/usr/bin/env bash
 
-ENV_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.local/share}/env"
-if [ -f "$ENV_CACHE_DIR/install.lock" ]; then
-  printf "env: already setup, exiting.\n"
-  exit 1
-fi
-mkdir -p "$ENV_CACHE_DIR"
-
-ENV_STATE_DIR="${XDG_CACHE_HOME:-$HOME/.local/state}/env"
-mkdir -p "$ENV_STATE_DIR"
-
-log() {
-  printf "[INFO]  $(date) env installer: $1\n"
-}
-dbg() {
-  [ -n "$ENV_DEBUG" ] && printf "[DEBUG] $(date) env installer: $1\n"
-}
-wrn() {
-  printf "[WARN]  $(date) env installer: $1\n"
-}
-
 ENV_REPO_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )"
+source "$ENV_REPO_DIR/scripts/src/bash/log.sh"
+logger_set_log_component "env installer"
+
+ENV_STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/env"
+mkdir -p "$ENV_STATE_DIR"
+log "starting environment installer." | tee -a "$ENV_STATE_DIR/env.log"
+
+dbg "storing $ENV_REPO_DIR in $ENV_CACHE_DIR/repodir" | tee -a "$ENV_STATE_DIR/env.log"
 printf "ENV_REPO_DIR=$ENV_REPO_DIR" > "$ENV_CACHE_DIR/repodir"
 
-CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
-REPO_CONFIG="$ENV_REPO_DIR/configurations"
+ENV_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.local/share}/env"
+if [ -f "$ENV_CACHE_DIR/install.lock" ]; then
+  die "already setup, exiting" | tee -a "$ENV_STATE_DIR/env.log"
+fi
+dbg "creating $ENV_CACHE_DIR" | tee -a "$ENV_STATE_DIR/env.log"
+mkdir -p "$ENV_CACHE_DIR"
 
 # Install tools
 env_install() {
-  dbg "running $1/install.sh" >> "$ENV_STATE_DIR/env.log"
+  dbg "running $1/install.sh" | tee -a "$ENV_STATE_DIR/env.log"
   pushd $1
   ./install.sh
   popd
 }
 env_install_in_new_shell() {
-  dbg "running $1/install.sh" >> "$ENV_STATE_DIR/env.log"
+  dbg "running $1/install.sh" | tee -a "$ENV_STATE_DIR/env.log"
   pushd $1
   bash ./install.sh
   popd
 }
 
-# Can we run all these in the background?
-# We need to keep a log.
-# TODO: we also need to take care of logging everything, if we plan to run in parallel
-log "installing tools." >> "$ENV_STATE_DIR/env.log"
+REPO_CONFIG="$ENV_REPO_DIR/configurations"
+log "installing tools." | tee -a "$ENV_STATE_DIR/env.log"
 env_install "$REPO_CONFIG/configurations/rust"
 env_install_in_new_shell "$REPO_CONFIG/configurations/tools/bat"
 env_install_in_new_shell "$REPO_CONFIG/configurations/tools/cargo-update"
@@ -53,9 +43,7 @@ env_install_in_new_shell "$REPO_CONFIG/configurations/tools/ripgrep"
 env_install_in_new_shell "$REPO_CONFIG/configurations/tools/yazi"
 env_install_in_new_shell "$REPO_CONFIG/configurations/tools/zellij"
 
-# Check installation
-
-log "checking installed tools." >> "$ENV_STATE_DIR/env.log"
+log "checking installed tools." | tee -a "$ENV_STATE_DIR/env.log"
 wants=(
   bat
   delta
@@ -74,15 +62,16 @@ YELLOW='\033[93;1m'
 for want in "${wants[@]}"
 do
   if ! command -v "$want" &>/dev/null; then
-    wrn "please install $want" >> "$ENV_STATE_DIR/env.log"
+    wrn "please install $want" | tee -a "$ENV_STATE_DIR/env.log"
   fi
 done
 
-log "linking configuration files." >> "$ENV_STATE_DIR/env.log"
 symlink() {
-  dbg "linking $1 to $2" >> "$ENV_STATE_DIR/env.log"
+  dbg "linking $1 to $2" | tee -a "$ENV_STATE_DIR/env.log"
   ln -s "$1" "$2"
 }
+CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
+log "linking configuration files." | tee -a "$ENV_STATE_DIR/env.log"
 symlink "$REPO_CONFIG/bat"          "$CONFIG/bat"
 symlink "$REPO_CONFIG/git"          "$CONFIG/git"
 symlink "$REPO_CONFIG/nvim"         "$CONFIG/nvim"
@@ -94,11 +83,11 @@ symlink "$REPO_CONFIG/bash/.bashrc" "$HOME/.bashrc.$(whoami)"
 
 append_to_bashrc() {
   if ! grep -q "$1" "$HOME/.bashrc"; then
-    printf "$1\n" >> "$HOME/.bashrc"
+    printf "$1\n" | tee -a "$HOME/.bashrc"
   fi
 }
-log "appending env configuration .bashrc to local .bashrc" >> "$ENV_STATE_DIR/env.log"
+log "appending env configuration .bashrc to local .bashrc" | tee -a "$ENV_STATE_DIR/env.log"
 append_to_bashrc ". \"$HOME/.bashrc.$(whoami)\""
 
-log "setup complete, creating lock file at $ENV_CACHE_DIR/install.lock" >> "$ENV_STATE_DIR/env.log"
+log "setup done, creating lock file at $ENV_CACHE_DIR/install.lock" | tee -a "$ENV_STATE_DIR/env.log"
 touch "$ENV_CACHE_DIR/install.lock"
