@@ -48,6 +48,25 @@ function git_clone_wt {
 
     cd -
 }
+function gh_repo_clone_wt() {
+    # get repo name from url
+    local url="${@: -1}"
+    IFS='/' read -ra split_url <<< "$url"
+    local repo_name="${split_url[-1]/.git/}" # strip .git if present
+
+    mkdir "$repo_name"
+    cd "$repo_name"
+
+    # place bare repo contents in hidden folder to hide them
+    gh repo clone $* .bare -- --bare
+    printf "gitdir: ./.bare" > .git
+
+    # make git bare repo fetch remote branches properly
+    git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+    git fetch origin
+
+    cd -
+}
 function select_worktree {
     local worktree="$(git worktree list --porcelain | rg worktree | fzf | awk '{print $2}')"
     echo $worktree
@@ -89,4 +108,8 @@ function switch_worktree {
     else
         cd $1
     fi
+}
+
+function git_update_current_branch {
+    git pull origin $(git rev-parse --abbrev-ref HEAD)
 }
