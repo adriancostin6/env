@@ -140,6 +140,25 @@ function Invoke-GitCloneWorktree {
     Pop-Location
 }
 
+function Invoke-GhCloneWorktree {
+    param (
+        [Parameter(Mandatory)][string] $Url
+    )
+    [string[]] $split_url = $Url -split "/"
+    [string] $repo_name = $split_url[-1] -replace ".git", ""
+
+    New-Item -Name "$repo_name" -Type Directory
+    Push-Location "$repo_name"
+
+    gh repo clone "$Url" .bare -- --bare
+    "gitdir: ./.bare" | Out-File ".git"
+
+    git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+    git fetch origin
+
+    Pop-Location
+}
+
 function Invoke-GitFixup {
     param (
         [string] $Type
@@ -375,6 +394,7 @@ function Invoke-GitWrapper {
         'fixup (amend)'                     = 'Invoke-FuzzyGitFixupAmend'
         'push'                              = 'Invoke-GitPushSimple'
         'worktree (clone)'                  = 'Invoke-GitCloneWorktree'
+        'worktree (clone gh cli)'           = 'Invoke-GhCloneWorktree'
         'worktree (switch)'                 = 'Invoke-GitSwitchWorktree'
         'worktree (create)'                 = 'Invoke-GitCreateWorktree'
         'worktree (remove)'                 = 'Invoke-GitRemoveWorktree'
