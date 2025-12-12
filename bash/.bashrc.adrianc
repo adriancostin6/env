@@ -28,17 +28,30 @@ export HISTFILE="${XDG_STATE_HOME}"/bash/history
 export CARGO_HOME="$XDG_DATA_HOME"/cargo
 export IDEA_PROPERTIES="$HOME/env/idea/idea.properties"
 
-# Path
+
+# setup local bin folder
 [[ ":$PATH:" == "*:$HOME/.local/bin:*" ]] || PATH="$HOME/.local/bin:$PATH"
 
-# Configuration
+# source configuration scripts
 pushd "$HOME/env/scripts"
 source ./init.sh
 popd
 
+# setup nvm
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
-# These have to stay here because we need the sourced config for them to work.
+# persist history between multiple bash sessions
+mkdir -p "$XDG_STATE_HOME/bash"
+export HISTCONTROL='ignoreboth' # no leading spaces before cmd, no duplicates
+export HISTFILE="$XDG_STATE_HOME/bash/history"
+export HISTFILESIZE=10000
+export HISTSIZE=10000
+export PROMPT_COMMAND='history -a' # update history on each prompt
+shopt -s histappend
+set -o history
+
+# don't move these around, they require the sourced config scripts and must be at the end
 exec_if zoxide init bash
 exec_if oh-my-posh init bash --config "$XDG_CONFIG_HOME/oh-my-posh/.adrianc.omp.json"
+history -c
