@@ -90,3 +90,19 @@ function switch_worktree {
         cd $1
     fi
 }
+
+function git_update_current_branch {
+    git pull origin $(git rev-parse --abbrev-ref HEAD)
+}
+
+function git_push_current_force {
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    local cmd="git push origin --force $current_branch"
+
+    read -r -p "Execute: $cmd ?(y/N)" confirm
+    local lower=${confirm,,}
+
+    if [ "$lower" = "y" ]; then
+        eval "$cmd"
+    fi
+}
