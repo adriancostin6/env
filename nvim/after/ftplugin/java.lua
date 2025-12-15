@@ -11,7 +11,7 @@ if vim.loop.os_uname().sysname == 'Windows_NT' then
 else
   config_path = vim.fn.stdpath('data') .. '/mason/packages/jdtls/config_linux' 
 end
-local launcher = vim.fn.stdpath('data') .. '/mason/packages/jdtls/plugins/org.eclipse.equinox.launcher_1.7.0.v20250331-1702.jar'
+local launcher = vim.fn.stdpath('data') .. '/mason/packages/jdtls/plugins/org.eclipse.equinox.launcher_1.7.100.v20251111-0406.jar'
 
 local config = {
   -- The command that starts the language server
