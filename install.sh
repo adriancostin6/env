@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+ENV_USER=$(whoami)
+
 ENV_REPO_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )"
 source "$ENV_REPO_DIR/scripts/src/bash/log.sh"
 logger_set_log_component "env installer"
@@ -34,15 +36,15 @@ env_install_in_new_shell() {
 }
 
 REPO_CONFIG="$ENV_REPO_DIR/configurations"
-log "installing tools." | tee -a "$ENV_STATE_DIR/env.log"
-env_install "$REPO_CONFIG/configurations/rust"
-env_install_in_new_shell "$REPO_CONFIG/configurations/tools/bat"
-env_install_in_new_shell "$REPO_CONFIG/configurations/tools/cargo-update"
-env_install_in_new_shell "$REPO_CONFIG/configurations/tools/eza"
-env_install_in_new_shell "$REPO_CONFIG/configurations/tools/fd"
-env_install_in_new_shell "$REPO_CONFIG/configurations/tools/ripgrep"
-env_install_in_new_shell "$REPO_CONFIG/configurations/tools/yazi"
-env_install_in_new_shell "$REPO_CONFIG/configurations/tools/zellij"
+#log "installing tools." | tee -a "$ENV_STATE_DIR/env.log"
+#env_install "$REPO_CONFIG/configurations/rust"
+#env_install_in_new_shell "$REPO_CONFIG/configurations/tools/bat"
+#env_install_in_new_shell "$REPO_CONFIG/configurations/tools/cargo-update"
+#env_install_in_new_shell "$REPO_CONFIG/configurations/tools/eza"
+#env_install_in_new_shell "$REPO_CONFIG/configurations/tools/fd"
+#env_install_in_new_shell "$REPO_CONFIG/configurations/tools/ripgrep"
+#env_install_in_new_shell "$REPO_CONFIG/configurations/tools/yazi"
+#env_install_in_new_shell "$REPO_CONFIG/configurations/tools/zellij"
 
 log "checking installed tools." | tee -a "$ENV_STATE_DIR/env.log"
 wants=(
@@ -80,15 +82,27 @@ symlink "$REPO_CONFIG/wezterm"      "$CONFIG/wezterm"
 symlink "$REPO_CONFIG/yazi"         "$CONFIG/yazi"
 symlink "$REPO_CONFIG/zellij"       "$CONFIG/zellij"
 symlink "$REPO_CONFIG/oh-my-posh"   "$CONFIG/oh-my-posh"
-symlink "$REPO_CONFIG/bash/.bashrc" "$HOME/.bashrc.$(whoami)"
+symlink "$REPO_CONFIG/bash/.bashrc" "$HOME/.bashrc.$ENV_USER.env"
 
 append_to_bashrc() {
-  if ! grep -q "$1" "$HOME/.bashrc"; then
-    printf "$1\n" | tee -a "$HOME/.bashrc"
+  local file="$1"
+  local cmd="$2"
+
+  if [ -z "$file" ]; then
+    file="$HOME/.bashrc"
+  fi
+
+  if ! grep -q "$cmd" "$file"; then
+    printf "$cmd\n" | tee -a "$file"
   fi
 }
-log "appending env configuration .bashrc to local .bashrc" | tee -a "$ENV_STATE_DIR/env.log"
-append_to_bashrc ". \"$HOME/.bashrc.$(whoami)\""
+if [ -z "$1" ]; then
+  log "appending env configuration to local .bashrc" | tee -a "$ENV_STATE_DIR/env.log"
+  append_to_bashrc "" ". \"$HOME/.bashrc.$ENV_USER.env\""
+else
+ log "appending env configuration to local .bashrc.$ENV_USER" | tee -a "$ENV_STATE_DIR/env.log"
+ append_to_bashrc "$HOME/.bashrc.$ENV_USER" ". \"$HOME/.bashrc.$ENV_USER.env\""
+fi
 
 log "setup done, creating lock file at $ENV_CACHE_DIR/install.lock" | tee -a "$ENV_STATE_DIR/env.log"
 touch "$ENV_CACHE_DIR/install.lock"
