@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]; then
+    echo "usage: gh_workflow [--select path]"
+    exit 1
+fi
+
+if [ "$1" = "--select-from-folder" ]; then
+    _WORKFLOW=$(fd ".*.yml" "$2" | fzf)
+else
+    _WORKFLOW="$1"
+fi
+
+_RESULT="{}"
+while IFS= read -r key; do
+    _DEFAULT=$(yq ".on.workflow_dispatch.inputs.${key}.default" "$_WORKFLOW")
+    _HAS_OPTIONS=$(yq ".on.workflow_dispatch.inputs.${key} | has(\"options\")" "$_WORKFLOW")
+
+    if [ "$_HAS_OPTIONS" = "true" ]; then
+        _OPTIONS=$(yq ".on.workflow_dispatch.inputs.${key}.options | .[]" "$_WORKFLOW")
+        _SELECTED=$(echo "$_OPTIONS" | fzf --prompt="$key> " --header="default: $_DEFAULT" --height=10 --layout=reverse)
+        _SELECTED="${_SELECTED:-$_DEFAULT}"
+    else
+        # No options: show default, allow free input
+        _SELECTED=$(echo "$_DEFAULT" | fzf --prompt="$key> " --header="default: $_DEFAULT" --height=5 --layout=reverse --print-query --no-select-1 | tail -n1)
+        _SELECTED="${_SELECTED:-$_DEFAULT}"
+    fi
+
+    _RESULT=$(echo "$_RESULT" | yq ". + {\"${key}\": \"${_SELECTED}\"}" -o json)
+done < <(yq '.on.workflow_dispatch.inputs | keys | .[]' "$_WORKFLOW")
+
+echo "$_RESULT"

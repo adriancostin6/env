@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+usage() {
+    printf "%s" "\
+usage: gh_workflow_run [options...]
+options:
+    --name workflow-name
+    --branch branch-name
+    --json: start workflow using json file
+    --interactive: select workflow parameters interactively
+    --dump-json: dump interactive config to a json file
+    --help
+    "
+}
+
+[[ $# -eq 0 ]] && { usage; exit 1; }
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --name|-n)
+            _ARG_NAME="$2"
+            shift
+            shift
+            ;;
+        --branch|-b)
+            _ARG_BRANCH="$2"
+            shift
+            shift
+            ;;
+        --json)
+            _ARG_JSON="$2"
+            shift
+            shift
+            ;;
+        --interactive|-i)
+            _ARG_INTERACTIVE=1
+            shift
+            ;;
+        --dump-json)
+            _ARG_DUMP_JSON=1
+            _JSON_DUMP_LOCATION="$HOME/.local/state/gh_workflow_run"
+            mkdir -p "$_JSON_DUMP_LOCATION"
+            shift
+            ;;
+        --bypass)
+            _ARG_BYPASS=1
+            shift
+            _ARGS_BYPASS=("$@")
+            break
+            ;;
+        --help)
+            _ARG_HELP=1
+            shift
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
+
+[[ $_ARG_HELP ]] && { usage; exit; }
+
+[[ $_ARG_BYPASS ]] && gh workflow run "${_ARGS_BYPASS[@]}" && exit
+
+if [[ $_ARG_JSON ]] && [[ $_ARG_INTERACTIVE ]]; then
+    echo "Cannot run with JSON file and interactive mode at the same time."
+    exit 1
+fi
+
+_BRANCH="${_ARG_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}"
+_NAME="$_ARG_NAME"
+if [[ -z "$_ARG_NAME" ]]; then
+    _REPO_ROOT=$(git rev-parse --show-toplevel)
+    _NAME="$_REPO_ROOT/$(gh workflow list --json path --jq '.[].path' | fzf)"
+    [[ "$_NAME" ]] || { echo "Can't get workflow name."; exit 1; }
+fi
+
+if [[ $_ARG_INTERACTIVE ]]; then
+    _JSON="$(gh_workflow_json "$_NAME" )"
+    if [[ $_ARG_DUMP_JSON ]]; then
+        _BRANCH_NOSLASH=${_BRANCH//\//}
+        _JSON_DUMP_FILE="$(basename "$_NAME").$_BRANCH_NOSLASH.json"
+        echo "Dumping JSON configuration to $_JSON_DUMP_LOCATION/$_JSON_DUMP_FILE"
+        printf "%s" "$_JSON" >> "$_JSON_DUMP_LOCATION/$_JSON_DUMP_FILE"
+    fi
+    gh_workflow_interactive --json "$_JSON_DUMP_LOCATION/$_JSON_DUMP_FILE"
+    exit 0
+fi
+
+gh_workflow_interactive --json "$_ARG_JSON"
