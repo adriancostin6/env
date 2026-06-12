@@ -28,6 +28,43 @@ return {
     action = wezterm.action.ActivateTabRelative(-1),
   },
 
+  -- Panes
+  {
+    key   = 'h',
+    mods  = 'META',
+    action = wezterm.action.ActivatePaneDirection 'Left',
+  },
+  {
+    key   = 'j',
+    mods  = 'META',
+    action = wezterm.action.ActivatePaneDirection 'Down',
+  },
+  {
+    key   = 'k',
+    mods  = 'META',
+    action = wezterm.action.ActivatePaneDirection 'Up',
+  },
+  {
+    key   = 'l',
+    mods  = 'META',
+    action = wezterm.action.ActivatePaneDirection 'Right',
+  },
+  {
+    key   = 'v',
+    mods  = 'META',
+    action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' },
+  },
+  {
+    key   = 'o',
+    mods  = 'META',
+    action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
+  },
+  {
+    key   = 'c',
+    mods  = 'META',
+    action = wezterm.action.CloseCurrentPane { confirm = true },
+  },
+
   -- Scrollback
   {
     key   = 'j',
