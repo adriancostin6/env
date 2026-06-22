@@ -95,6 +95,10 @@ append_to_bashrc() {
     file="$HOME/.bashrc"
   fi
 
+  if [ -f "$file" ]; then
+      touch "$file"
+  fi
+
   if ! grep -q "$cmd" "$file"; then
     printf "$cmd\n" | tee -a "$file"
   fi
