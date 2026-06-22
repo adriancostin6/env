@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+usage() {
+    printf "%s" "\
+usage: git_delete branch 
+    "
+}
+
+[[ $# -eq 0 ]] && { usage; exit 1; }
+
+_BRANCH="$1"
+
+git log --oneline -n10 "$_BRANCH"
+
+read -r -n 1 -p "Delete $_BRANCH (Y/n)"
+echo
+if [[ "$REPLY" =~ ^[nN]$ ]]; then
+    exit 0
+fi
+
+IFS='/' read -r -a _PARTS <<< "$_BRANCH"
+_PARTS_LENGTH="${#_PARTS[@]}"
+if [[ "$_PARTS_LENGTH" -gt 1 ]]; then
+    _REMOTE="${_PARTS[0]}"
+    _BRANCH_NAME="$(printf "%s" "${_PARTS[@]:1}")"
+    git push "$_REMOTE" --delete "$_BRANCH_NAME"
+    exit 0
+else
+    git push origin --delete "$_BRANCH"
+fi

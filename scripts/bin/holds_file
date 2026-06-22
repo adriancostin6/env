@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+fuser --user --kill --interactive "$1"
+
