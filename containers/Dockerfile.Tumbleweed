@@ -1,0 +1,48 @@
+FROM opensuse/tumbleweed:latest
+
+# Refresh and update packages
+RUN zypper --non-interactive refresh
+RUN zypper --non-interactive update
+
+RUN mkdir -p /root/.config
+RUN mkdir -p /root/.local/bin
+
+RUN zypper --non-interactive install    \
+    7zip                                \
+    bat                                 \
+    bat-bash-completion                 \
+    bat-extras                          \
+    cmake                               \
+    eza                                 \
+    eza-bash-completion                 \
+    fastfetch                           \
+    fd                                  \
+    fd-bash-completion                  \
+    fzf                                 \
+    fzf-bash-integration                \
+    gcc                                 \
+    gh                                  \
+    gh-bash-completion                  \
+    git                                 \
+    git-delta                           \
+    hyperfine                           \
+    hyperfine-bash-completion           \
+    java-26-openjdk-devel               \
+    jfrog-cli                           \
+    jfrog-cli-bash-completion           \
+    less                                \
+    make                                \
+    maven                               \
+    neovim                              \
+    python315                           \
+    ripgrep-bash-completion             \
+    wget                                \
+    xclip                               \
+    xclock                              \
+    yazi                                \
+    yazi-bash-completion                \
+    zellij                              \
+    zellij-bash-completion              \
+    zoxide
+
+CMD ["/bin/bash", "-c", "zellij"]
