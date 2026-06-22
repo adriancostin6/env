@@ -155,3 +155,20 @@ EOF
     local format=$(echo $fmt | tr -d '\n') # strip newlines
     git log --all --graph --abbrev-commit --decorate --format=format:"$format"
 }
+
+function gh_workflow_it { 
+
+    if [ $# -gt 1 ]; then
+        printf "%s" "usage: gh_workflow_it [branch]"
+        return
+    fi
+
+    local branch
+    if  [ $# -eq 0 ] ; then
+        branch="$(git rev-parse --abbrev-ref HEAD)"
+    else
+        branch="$1"
+    fi
+
+    gh workflow run --ref "$branch"
+}

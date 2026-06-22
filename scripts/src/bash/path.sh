@@ -1,3 +1,10 @@
+path_remove_script_dir() {
+    local script_dir
+    script_dir="$(dirname "$(realpath "$0")")"
+    echo "${PATH//$script_dir:/}"
+}
+export -f path_remove_script_dir
+
 path_append() {
     [ "$#" -ne 1 ] && { return 1; }
     local in="${1%/}" # remove trailing slashes
