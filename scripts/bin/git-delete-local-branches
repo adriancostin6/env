@@ -1,0 +1,3 @@
+#/usr/bin/env bash
+
+git branch -D $(git branch -a | rg $1 | fzf --multi)

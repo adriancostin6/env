@@ -35,4 +35,5 @@ alias gg='git_graph'
 function _zellij_opt {
     zellij options --theme $ZELLIJ_THEME $*
 }
+alias zn="_zellij_opt --session-name"
 alias za='_zellij_opt --attach-to-session true --session-name'

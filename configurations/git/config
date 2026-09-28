@@ -3,4 +3,5 @@
 [include]
 	path = common.gitconfig
 	path = tools.gitconfig
+	path = aliases.gitconfig
 	path = ~/.gitconfig-local # per-machine configuration file

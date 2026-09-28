@@ -1,0 +1,12 @@
+[alias]
+       amend = commit --amend
+       cp = cherry-pick
+       fixup = commit --fixup
+       lo = log --oneline
+       lp = log --patch
+       ls = log --stat
+       pc = push-current-branch
+       ri = rebase --interactive
+       st = status
+       sw = switch
+       up = update-current-branch
