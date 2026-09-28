@@ -3,7 +3,7 @@
 main() {
     local current
     current="$(git branch --show-current)"
-    git pull origin "$current"
+    git pull origin "$current" "$@"
 }
 
-main
+main "$@"

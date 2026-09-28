@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ $# -eq 0 ]; then
-    echo "usage: gh_workflow_json [--select-from-folder path]"
+    echo "usage: gh-workflow-json [--select-from-folder path]"
     exit 1
 fi
 

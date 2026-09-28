@@ -112,7 +112,7 @@ main() {
     fi
 
     if [[ $_ARG_INTERACTIVE ]]; then
-        _JSON="$(gh_workflow_json "$workflow_abspath" )"
+        _JSON="$(gh-workflow-json "$workflow_abspath" )"
         if [[ $_ARG_DUMP_JSON ]]; then
         _JSON_DUMP_FILE="$(basename "$workflow_abspath").$branch_no_slash.json"
         echo "Dumping JSON configuration to $_JSON_DUMP_LOCATION/$_JSON_DUMP_FILE"
