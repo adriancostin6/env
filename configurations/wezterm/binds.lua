@@ -14,7 +14,7 @@ return {
   },
   {
     key   = 'c',
-    mods  = 'META|SHIFT',
+    mods  = 'SUPER|SHIFT',
     action = wezterm.action.CloseCurrentTab { confirm = true },
   },
   {
@@ -61,7 +61,7 @@ return {
   },
   {
     key   = 'c',
-    mods  = 'META',
+    mods  = 'META|SHIFT',
     action = wezterm.action.CloseCurrentPane { confirm = true },
   },
 

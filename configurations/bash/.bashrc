@@ -44,8 +44,8 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
 # don't move these around, they require the sourced config scripts and must be at the end
-exec_if zoxide init bash
 exec_if oh-my-posh init bash --config "$XDG_CONFIG_HOME/oh-my-posh/.adrianc.omp.json"
+exec_if zoxide init bash
 
 # persist history between multiple bash sessions
 mkdir -p "$XDG_STATE_HOME/bash"
@@ -53,7 +53,7 @@ export HISTCONTROL='ignoreboth:erasedups' # no spaces, no duplicates
 export HISTFILE="$XDG_STATE_HOME/bash/history"
 export HISTFILESIZE=10000
 export HISTSIZE=10000
-export PROMPT_COMMAND="history -a; $PROMPT_COMMAND" # update history on each prompt
+export PROMPT_COMMAND="history -a;$PROMPT_COMMAND" # update history on each prompt
 shopt -s histappend
 set -o history
 
