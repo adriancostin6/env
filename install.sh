@@ -16,6 +16,7 @@ log "starting environment installer." | tee -a "$ENV_LOGFILE"
 ENV_CACHE_DIR="$HOME/.local/share/env"
 if [ -f "$ENV_CACHE_DIR/install.lock" ]; then
   die "already setup, exiting" | tee -a "$ENV_LOGFILE"
+  exit 1  # we need it, tee will bypass exit somehow
 fi
 dbg "creating $ENV_CACHE_DIR" | tee -a "$ENV_LOGFILE"
 mkdir -p "$ENV_CACHE_DIR"
@@ -87,25 +88,27 @@ symlink "$REPO_CONFIG/zellij"       "$CONFIG/zellij"
 symlink "$REPO_CONFIG/oh-my-posh"   "$CONFIG/oh-my-posh"
 symlink "$REPO_CONFIG/bash/.bashrc" "$HOME/.bashrc.$ENV_USER.env"
 
+_CONFIG_FILE="$HOME/.bashrc"
+_SOURCE_CONFIG_LINE='. $HOME'"/.bashrc.$ENV_USER.env"
+_FINISH_CONFIG_LINE='kill -USR2 $$'"  # keep at end of file to properly finish $ENV_USER bash configuration."
+if [ ! -w "$_CONFIG_FILE" ]; then
+  _OLDFILE="$_CONFIG_FILE"
+  _CONFIG_FILE="$HOME/.bashrc.$ENV_USER"
+  wrn "$_OLDFILE is not writeable."
+  wrn "Please manually add these to $_OLDFILE to activate bash configuration:"
+  wrn "$_SOURCE_CONFIG_LINE"
+  wrn "$_FINISH_CONFIG"
+fi
 append_to_bashrc() {
-  local file="$1"
-  local cmd="$2"
+  local cmd="$1"
 
-  if [ -z "$file" ]; then
-    file="$HOME/.bashrc"
-  fi
-
-  if ! grep -q "$cmd" "$file"; then
-    printf "$cmd\n" | tee -a "$file"
+  if ! grep -q "$cmd" "$_CONFIG_FILE"; then
+    log "appending line to $_CONFIG_FILE: $cmd" | tee -a "$ENV_LOGFILE"
+    printf "$cmd\n" | tee -a "$_CONFIG_FILE"
   fi
 }
-if [ -z "$1" ]; then
-  log "appending env configuration to local .bashrc" | tee -a "$ENV_LOGFILE"
-  append_to_bashrc "" ". \"$HOME/.bashrc.$ENV_USER.env\""
-else
- log "appending env configuration to local .bashrc.$ENV_USER" | tee -a "$ENV_LOGFILE"
- append_to_bashrc "$HOME/.bashrc.$ENV_USER" ". \"$HOME/.bashrc.$ENV_USER.env\""
-fi
+append_to_bashrc "$_SOURCE_CONFIG_LINE"
+append_to_bashrc "$_FINISH_CONFIG_LINE"
 
 log "setup done, creating lock file at $ENV_CACHE_DIR/install.lock" | tee -a "$ENV_LOGFILE"
 touch "$ENV_CACHE_DIR/install.lock"

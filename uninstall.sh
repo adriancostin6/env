@@ -49,8 +49,12 @@ rm_symlink "$CONFIG/oh-my-posh"
 rm_symlink "$HOME/.bashrc.$ENV_USER.env"
 
 log "sanitizing user .bashrc to remove environment script sourcing." | tee -a "$ENV_LOGFILE"
-if [ -z "$1" ]; then
-  sed -i "/.bashrc.$ENV_USER.env/d" "$HOME/.bashrc"
-else
-  sed -i "/.bashrc.$ENV_USER.env/d" "$HOME/.bashrc.$(whoami)"
+_CONFIG_FILE="$HOME/.bashrc"
+_SOURCE_CONFIG_LINE='. $HOME'"/.bashrc.$ENV_USER.env"
+_FINISH_CONFIG_LINE="kill -USR2 $$  # keep at end of file to properly finish $ENV_USER bash configuration."
+if [ ! -w "$_CONFIG_FILE" ]; then
+  _CONFIG_FILE="$HOME/.bashrc.$ENV_USER"
 fi
+
+sed -i "/.bashrc.$ENV_USER.env/d" "$_CONFIG_FILE"
+sed -i "/keep at end of file to properly finish/d" "$_CONFIG_FILE"
