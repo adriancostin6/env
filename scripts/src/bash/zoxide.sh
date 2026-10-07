@@ -8,4 +8,4 @@ _init_zoxide_last() {
     exec_if zoxide init bash
     trap - USR2  # only once
 }
-trap '_init_zoxide_last' USR2
+add_trap '_init_zoxide_last' USR2
