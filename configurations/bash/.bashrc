@@ -9,17 +9,17 @@ export IDEA_PROPERTIES="$ENV_REPO_DIR/configurations/idea/idea.properties"
 export ENV_APP_HOME="$HOME/apps"
 export ENV_REPO_HOME="$HOME/repos"
 
-# PATH
 [[ ":$PATH:" == "*:$HOME/.local/bin:*" ]] || PATH="$HOME/.local/bin:$PATH"
-PATH="$PWD/scripts/bin:$PATH"
 
 # +-----------------------------+
 # | My Bash configuration stack |
 # +-----------------------------+----------------------------------------------
 ENV_CACHE_DIR="$HOME/.local/share/env"
 . "$ENV_CACHE_DIR/repodir"
-
 . "$ENV_REPO_DIR/scripts/src/bash/dirs.sh"
+
+PATH="$ENV_REPO_DIR/scripts/bin:$PATH"
+
 pushd "$ENV_REPO_DIR"
 
 # Has to be first
